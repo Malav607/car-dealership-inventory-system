@@ -80,3 +80,38 @@ module.exports = {
   getCars,
   searchCars,
 };
+
+const updateCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await Car.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!car) {
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Car updated successfully",
+      data: car,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createCar,
+  getCars,
+  searchCars,
+  updateCar,
+};

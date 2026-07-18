@@ -89,3 +89,60 @@ describe("GET /api/cars/search", () => {
     expect(findSpy).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("PUT /api/cars/:id", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should update a car and return the updated details", async () => {
+    const updatedCar = {
+      _id: "60d0fe4f5311236168a109ca",
+      make: "Toyota",
+      model: "Camry",
+      year: 2023,
+      price: 26000,
+      mileage: 15000,
+      fuelType: "Hybrid",
+      transmission: "Automatic",
+      color: "Silver",
+      status: "Available",
+    };
+
+    const updateSpy = jest.spyOn(Car, "findByIdAndUpdate").mockResolvedValue(updatedCar);
+
+    const res = await request(app)
+      .put("/api/cars/60d0fe4f5311236168a109ca")
+      .send({
+        year: 2023,
+        price: 26000,
+      });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      success: true,
+      message: "Car updated successfully",
+      data: updatedCar,
+    });
+    expect(updateSpy).toHaveBeenCalledWith(
+      "60d0fe4f5311236168a109ca",
+      { year: 2023, price: 26000 },
+      { new: true, runValidators: true }
+    );
+  });
+
+  it("should return 404 if the car to update is not found", async () => {
+    const updateSpy = jest.spyOn(Car, "findByIdAndUpdate").mockResolvedValue(null);
+
+    const res = await request(app)
+      .put("/api/cars/60d0fe4f5311236168a109cb")
+      .send({ price: 27000 });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Car not found",
+    });
+    expect(updateSpy).toHaveBeenCalledTimes(1);
+  });
+});
