@@ -188,15 +188,6 @@ const purchaseCar = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCar,
-  getCars,
-  searchCars,
-  updateCar,
-  deleteCar,
-  purchaseCar,
-};
-
 const restockCar = async (req, res) => {
   try {
     const { id } = req.params;
