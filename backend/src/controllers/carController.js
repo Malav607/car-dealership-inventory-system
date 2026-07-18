@@ -115,3 +115,36 @@ module.exports = {
   searchCars,
   updateCar,
 };
+
+const deleteCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await Car.findByIdAndDelete(id);
+
+    if (!car) {
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Car deleted successfully",
+      data: car,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createCar,
+  getCars,
+  searchCars,
+  updateCar,
+  deleteCar,
+};

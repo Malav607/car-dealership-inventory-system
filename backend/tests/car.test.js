@@ -146,3 +146,49 @@ describe("PUT /api/cars/:id", () => {
     expect(updateSpy).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("DELETE /api/cars/:id", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should delete a car and return the deleted details", async () => {
+    const deletedCar = {
+      _id: "60d0fe4f5311236168a109ca",
+      make: "Toyota",
+      model: "Camry",
+      year: 2022,
+      price: 25000,
+      mileage: 15000,
+      fuelType: "Hybrid",
+      transmission: "Automatic",
+      color: "Silver",
+      status: "Available",
+    };
+
+    const deleteSpy = jest.spyOn(Car, "findByIdAndDelete").mockResolvedValue(deletedCar);
+
+    const res = await request(app).delete("/api/cars/60d0fe4f5311236168a109ca");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      success: true,
+      message: "Car deleted successfully",
+      data: deletedCar,
+    });
+    expect(deleteSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109ca");
+  });
+
+  it("should return 404 if the car to delete is not found", async () => {
+    const deleteSpy = jest.spyOn(Car, "findByIdAndDelete").mockResolvedValue(null);
+
+    const res = await request(app).delete("/api/cars/60d0fe4f5311236168a109cb");
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Car not found",
+    });
+    expect(deleteSpy).toHaveBeenCalledTimes(1);
+  });
+});
