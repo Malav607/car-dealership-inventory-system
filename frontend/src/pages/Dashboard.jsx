@@ -14,6 +14,13 @@ import {
   ChevronRight,
   TrendingUp,
   RotateCcw,
+  Plus,
+  Edit2,
+  Trash2,
+  PackageCheck,
+  X,
+  AlertCircle,
+  HelpCircle,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -28,6 +35,29 @@ const Dashboard = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  // Modal State
+  const [isCarModalOpen, setIsCarModalOpen] = useState(false);
+  const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+  const [editingCar, setEditingCar] = useState(null);
+  const [selectedCarForRestock, setSelectedCarForRestock] = useState(null);
+  const [restockAmount, setRestockAmount] = useState("");
+
+  // Form State
+  const [formData, setFormData] = useState({
+    make: "",
+    model: "",
+    year: "",
+    price: "",
+    mileage: "",
+    fuelType: "Petrol",
+    transmission: "Manual",
+    color: "",
+    category: "",
+    quantity: "1",
+  });
+  const [formError, setFormError] = useState("");
+  const [formSubmitting, setFormSubmitting] = useState(false);
 
   const fetchCars = async (searchParams = "") => {
     setLoading(true);
@@ -64,7 +94,7 @@ const Dashboard = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (search) params.append("make", search); // Search make
+    if (search) params.append("make", search);
     if (category) params.append("category", category);
     if (minPrice) params.append("minPrice", minPrice);
     if (maxPrice) params.append("maxPrice", maxPrice);
@@ -95,12 +125,165 @@ const Dashboard = () => {
         throw new Error(data.message || "Purchase failed");
       }
 
-      // Update state directly to reflect decremented quantity
       setCars((prevCars) =>
         prevCars.map((car) => (car._id === carId ? data.data : car))
       );
     } catch (err) {
       alert(err.message || "Purchase failed");
+    }
+  };
+
+  // CRUD Handlers
+  const openCreateModal = () => {
+    setEditingCar(null);
+    setFormError("");
+    setFormData({
+      make: "",
+      model: "",
+      year: new Date().getFullYear().toString(),
+      price: "",
+      mileage: "",
+      fuelType: "Petrol",
+      transmission: "Manual",
+      color: "",
+      category: "",
+      quantity: "1",
+    });
+    setIsCarModalOpen(true);
+  };
+
+  const openEditModal = (car) => {
+    setEditingCar(car);
+    setFormError("");
+    setFormData({
+      make: car.make,
+      model: car.model,
+      year: car.year?.toString() || "",
+      price: car.price?.toString() || "",
+      mileage: car.mileage?.toString() || "",
+      fuelType: car.fuelType || "Petrol",
+      transmission: car.transmission || "Manual",
+      color: car.color,
+      category: car.category,
+      quantity: car.quantity?.toString() || "1",
+    });
+    setIsCarModalOpen(true);
+  };
+
+  const openRestockModal = (car) => {
+    setSelectedCarForRestock(car);
+    setRestockAmount("1");
+    setFormError("");
+    setIsRestockModalOpen(true);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCarSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+    setFormSubmitting(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const url = editingCar
+        ? `http://localhost:5000/api/cars/${editingCar._id}`
+        : "http://localhost:5000/api/cars";
+      const method = editingCar ? "PUT" : "POST";
+
+      const payload = {
+        ...formData,
+        year: Number(formData.year),
+        price: Number(formData.price),
+        mileage: Number(formData.mileage),
+        quantity: Number(formData.quantity),
+      };
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Operation failed");
+      }
+
+      if (editingCar) {
+        // Update car list
+        setCars((prev) => prev.map((car) => (car._id === editingCar._id ? data.data : car)));
+      } else {
+        // Add new car to front of list
+        setCars((prev) => [data.data, ...prev]);
+      }
+
+      setIsCarModalOpen(false);
+    } catch (err) {
+      setFormError(err.message || "Failed to save vehicle details");
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (carId) => {
+    if (!window.confirm("Are you absolutely sure you want to delete this vehicle from the inventory?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:5000/api/cars/${carId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Deletion failed");
+      }
+
+      setCars((prev) => prev.filter((car) => car._id !== carId));
+    } catch (err) {
+      alert(err.message || "Deletion failed");
+    }
+  };
+
+  const handleRestockSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+    setFormSubmitting(true);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:5000/api/cars/${selectedCarForRestock._id}/restock`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ quantity: Number(restockAmount) }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Restocking failed");
+      }
+
+      setCars((prev) => prev.map((car) => (car._id === selectedCarForRestock._id ? data.data : car)));
+      setIsRestockModalOpen(false);
+    } catch (err) {
+      setFormError(err.message || "Failed to restock vehicle");
+    } finally {
+      setFormSubmitting(false);
     }
   };
 
@@ -142,10 +325,10 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Banner */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-slate-900 to-slate-950 border border-slate-800 p-8 sm:p-10 mb-8">
+        {/* Banner with Admin action */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-tr from-slate-900 to-slate-950 border border-slate-800 p-8 sm:p-10 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center">
           <div className="absolute top-0 right-0 transform translate-x-20 -translate-y-20 w-80 h-80 bg-violet-600/10 rounded-full blur-3xl" />
-          <div className="relative z-10 max-w-xl">
+          <div className="relative z-10 max-w-xl mb-6 md:mb-0">
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none">
               Explore Premium Vehicles
             </h1>
@@ -153,6 +336,15 @@ const Dashboard = () => {
               Browse through our premium, verified dealership catalog. Instantly purchase cars or search using precision filters.
             </p>
           </div>
+          {user?.role === "Admin" && (
+            <button
+              onClick={openCreateModal}
+              className="relative z-10 flex items-center space-x-2 bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-sm px-6 py-4 rounded-2xl transition-all duration-300 shadow-xl shadow-white/5 active:scale-95"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Add Vehicle</span>
+            </button>
+          )}
         </div>
 
         {/* Search & Filter Section */}
@@ -276,16 +468,46 @@ const Dashboard = () => {
             {cars.map((car) => (
               <div
                 key={car._id}
-                className="bg-slate-900/20 border border-slate-900 hover:border-slate-800 hover:bg-slate-900/40 rounded-3xl p-5 flex flex-col justify-between transition-all duration-300 ease-in-out group shadow-xl shadow-black/10"
+                className="bg-slate-900/20 border border-slate-900 hover:border-slate-800 hover:bg-slate-900/40 rounded-3xl p-5 flex flex-col justify-between transition-all duration-300 ease-in-out group shadow-xl shadow-black/10 relative"
               >
+                {/* Admin Management Badges */}
+                {user?.role === "Admin" && (
+                  <div className="absolute top-4 right-4 flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                    <button
+                      onClick={() => openEditModal(car)}
+                      className="p-2 bg-slate-950 border border-slate-850 hover:border-slate-700 text-slate-300 hover:text-white rounded-xl shadow-lg transition-all"
+                      title="Edit vehicle details"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => openRestockModal(car)}
+                      className="p-2 bg-slate-950 border border-slate-855 hover:border-slate-750 text-slate-300 hover:text-white rounded-xl shadow-lg transition-all"
+                      title="Restock vehicle inventory"
+                    >
+                      <PackageCheck className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(car._id)}
+                      className="p-2 bg-slate-950 border border-slate-850 hover:border-red-900/50 text-slate-400 hover:text-red-400 rounded-xl shadow-lg transition-all"
+                      title="Delete vehicle"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
                 <div>
                   {/* Top Badge Details */}
                   <div className="flex justify-between items-start mb-4">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400 bg-violet-500/10 px-2.5 py-1 rounded-md border border-violet-500/20">
                       {car.category || "Vehicle"}
                     </span>
+                    {/* Hide state if hovering on admin actions */}
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md ${
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md transition-all duration-300 ${
+                        user?.role === "Admin" ? "group-hover:opacity-0" : ""
+                      } ${
                         car.quantity > 0
                           ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
                           : "text-slate-500 bg-slate-800/10 border border-slate-800/20"
@@ -351,6 +573,242 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+
+      {/* Car Modal (Create & Edit) */}
+      {isCarModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl animate-scaleUp">
+            <div className="flex justify-between items-center pb-6 border-b border-slate-800">
+              <h3 className="text-2xl font-bold text-white">
+                {editingCar ? "Edit Vehicle Details" : "Add New Vehicle"}
+              </h3>
+              <button
+                onClick={() => setIsCarModalOpen(false)}
+                className="p-1.5 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-xl transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCarSubmit} className="space-y-6 pt-6">
+              {formError && (
+                <div className="rounded-2xl bg-red-950/30 border border-red-800/50 p-4 flex items-start space-x-3 text-red-400 text-sm">
+                  <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Make</label>
+                  <input
+                    type="text"
+                    name="make"
+                    required
+                    value={formData.make}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. Audi, BMW"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Model</label>
+                  <input
+                    type="text"
+                    name="model"
+                    required
+                    value={formData.model}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. A4, M3"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Year</label>
+                  <input
+                    type="number"
+                    name="year"
+                    required
+                    value={formData.year}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. 2024"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Price ($)</label>
+                  <input
+                    type="number"
+                    name="price"
+                    required
+                    min="0"
+                    value={formData.price}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. 45000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Mileage (miles)</label>
+                  <input
+                    type="number"
+                    name="mileage"
+                    required
+                    min="0"
+                    value={formData.mileage}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. 12000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Category</label>
+                  <input
+                    type="text"
+                    name="category"
+                    required
+                    value={formData.category}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. Sedan, SUV, Coupe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Fuel Type</label>
+                  <select
+                    name="fuelType"
+                    value={formData.fuelType}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300 appearance-none"
+                  >
+                    <option value="Petrol" className="bg-slate-900">Petrol</option>
+                    <option value="Diesel" className="bg-slate-900">Diesel</option>
+                    <option value="Electric" className="bg-slate-900">Electric</option>
+                    <option value="Hybrid" className="bg-slate-900">Hybrid</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Transmission</label>
+                  <select
+                    name="transmission"
+                    value={formData.transmission}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300 appearance-none"
+                  >
+                    <option value="Manual" className="bg-slate-900">Manual</option>
+                    <option value="Automatic" className="bg-slate-900">Automatic</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Color</label>
+                  <input
+                    type="text"
+                    name="color"
+                    required
+                    value={formData.color}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. Metallic Black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quantity in Stock</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    required
+                    min="0"
+                    value={formData.quantity}
+                    onChange={handleFormChange}
+                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                    placeholder="e.g. 5"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-6 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsCarModalOpen(false)}
+                  className="px-5 py-3 border border-slate-800 hover:border-slate-700 hover:bg-slate-900 rounded-xl text-sm font-semibold transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formSubmitting}
+                  className="bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-violet-950/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formSubmitting ? "Saving..." : "Save Vehicle"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Restock Modal */}
+      {isRestockModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl animate-scaleUp">
+            <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+              <h3 className="text-xl font-bold text-white">
+                Restock Inventory
+              </h3>
+              <button
+                onClick={() => setIsRestockModalOpen(false)}
+                className="p-1.5 bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-xl transition-all"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleRestockSubmit} className="space-y-4 pt-4">
+              {formError && (
+                <div className="rounded-xl bg-red-950/30 border border-red-800/50 p-3 flex items-start space-x-2 text-red-400 text-xs">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs text-slate-400 mb-2">
+                  Increasing stock for: <strong className="text-white">{selectedCarForRestock?.make} {selectedCarForRestock?.model}</strong>
+                </p>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                  Amount to Add
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={restockAmount}
+                  onChange={(e) => setRestockAmount(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-650 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-sm transition-all duration-300"
+                  placeholder="e.g. 10"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsRestockModalOpen(false)}
+                  className="px-4 py-2.5 border border-slate-800 hover:border-slate-700 hover:bg-slate-900 rounded-xl text-xs font-semibold transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formSubmitting}
+                  className="bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition-all duration-300 shadow-lg shadow-violet-950/20 active:scale-95 disabled:opacity-50"
+                >
+                  {formSubmitting ? "Restocking..." : "Add to Stock"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
