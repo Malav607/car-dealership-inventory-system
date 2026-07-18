@@ -1,11 +1,13 @@
 const express = require("express");
 
+const carRoutes = require("./routes/carRoutes");
+
 const app = express();
 
+// Middleware
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Welcome to Car Dealership Inventory System API 🚗");
-});
+// Routes
+app.use("/api/cars", carRoutes);
 
 module.exports = app;

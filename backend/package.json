@@ -4,15 +4,17 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-  "start": "node server.js",
-  "dev": "node --watch server.js",
-  "test": "echo \"No tests yet\""
-},
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"No tests yet\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.4"
   }
 }
