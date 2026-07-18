@@ -148,3 +148,51 @@ module.exports = {
   updateCar,
   deleteCar,
 };
+
+const purchaseCar = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const car = await Car.findById(id);
+    if (!car) {
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
+    }
+
+    if (car.quantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Vehicle out of stock",
+      });
+    }
+
+    car.quantity -= 1;
+    if (car.quantity === 0) {
+      car.status = "Sold";
+    }
+
+    const updatedCar = await car.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Vehicle purchased successfully",
+      data: updatedCar,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createCar,
+  getCars,
+  searchCars,
+  updateCar,
+  deleteCar,
+  purchaseCar,
+};

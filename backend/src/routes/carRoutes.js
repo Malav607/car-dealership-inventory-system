@@ -1,5 +1,5 @@
 const express = require("express");
-const { createCar, getCars, searchCars, updateCar, deleteCar } = require("../controllers/carController");
+const { createCar, getCars, searchCars, updateCar, deleteCar, purchaseCar } = require("../controllers/carController");
 const { protect, authorize } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -12,5 +12,6 @@ router.get("/", getCars);
 router.get("/search", searchCars);
 router.put("/:id", updateCar);
 router.delete("/:id", authorize("Admin"), deleteCar);
+router.post("/:id/purchase", purchaseCar);
 
 module.exports = router;

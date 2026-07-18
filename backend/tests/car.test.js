@@ -243,3 +243,85 @@ describe("DELETE /api/cars/:id", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("POST /api/cars/:id/purchase", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should successfully purchase a car and decrease its quantity by 1", async () => {
+    const mockCar = {
+      _id: "60d0fe4f5311236168a109ca",
+      make: "Toyota",
+      model: "Camry",
+      price: 25000,
+      quantity: 5,
+      save: jest.fn().mockResolvedValue({
+        _id: "60d0fe4f5311236168a109ca",
+        make: "Toyota",
+        model: "Camry",
+        price: 25000,
+        quantity: 4,
+      }),
+    };
+
+    const findSpy = jest.spyOn(Car, "findById").mockResolvedValue(mockCar);
+
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/purchase")
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      success: true,
+      message: "Vehicle purchased successfully",
+      data: {
+        _id: "60d0fe4f5311236168a109ca",
+        make: "Toyota",
+        model: "Camry",
+        price: 25000,
+        quantity: 4,
+      },
+    });
+    expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109ca");
+    expect(mockCar.save).toHaveBeenCalled();
+  });
+
+  it("should return 400 if the car is out of stock", async () => {
+    const mockCar = {
+      _id: "60d0fe4f5311236168a109ca",
+      make: "Toyota",
+      model: "Camry",
+      price: 25000,
+      quantity: 0,
+    };
+
+    const findSpy = jest.spyOn(Car, "findById").mockResolvedValue(mockCar);
+
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/purchase")
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Vehicle out of stock",
+    });
+    expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109ca");
+  });
+
+  it("should return 404 if the car is not found", async () => {
+    const findSpy = jest.spyOn(Car, "findById").mockResolvedValue(null);
+
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109cb/purchase")
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Car not found",
+    });
+    expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109cb");
+  });
+});
