@@ -36,3 +36,47 @@ module.exports = {
   createCar,
   getCars,
 };
+
+const searchCars = async (req, res) => {
+  try {
+    const { make, model, category, minPrice, maxPrice } = req.query;
+    const query = {};
+
+    if (make) {
+      query.make = { $regex: new RegExp(make, "i") };
+    }
+    if (model) {
+      query.model = { $regex: new RegExp(model, "i") };
+    }
+    if (category) {
+      query.category = { $regex: new RegExp(category, "i") };
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) {
+        query.price.$gte = Number(minPrice);
+      }
+      if (maxPrice) {
+        query.price.$lte = Number(maxPrice);
+      }
+    }
+
+    const cars = await Car.find(query);
+    res.status(200).json({
+      success: true,
+      data: cars,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  createCar,
+  getCars,
+  searchCars,
+};

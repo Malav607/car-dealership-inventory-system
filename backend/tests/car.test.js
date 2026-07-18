@@ -59,3 +59,33 @@ describe("GET /api/cars", () => {
     expect(findSpy).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("GET /api/cars/search", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should return matching cars when searching by query parameters", async () => {
+    const mockCars = [
+      { make: "Toyota", model: "Camry", price: 25000 },
+      { make: "Honda", model: "Civic", price: 22000 },
+    ];
+
+    const findSpy = jest.spyOn(Car, "find").mockImplementation((query) => {
+      if (query && query.make && query.make.$regex) {
+        const regex = query.make.$regex;
+        return Promise.resolve(mockCars.filter((c) => regex.test(c.make)));
+      }
+      return Promise.resolve(mockCars);
+    });
+
+    const res = await request(app).get("/api/cars/search?make=Toyota");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      success: true,
+      data: [{ make: "Toyota", model: "Camry", price: 25000 }],
+    });
+    expect(findSpy).toHaveBeenCalledTimes(1);
+  });
+});
