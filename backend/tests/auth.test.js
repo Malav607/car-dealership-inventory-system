@@ -60,3 +60,85 @@ describe("POST /api/auth/register", () => {
     expect(findOneSpy).toHaveBeenCalledWith({ email: "existing@example.com" });
   });
 });
+
+describe("POST /api/auth/login", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should successfully login an existing user and return a token", async () => {
+    const loginData = {
+      email: "test@example.com",
+      password: "password123",
+    };
+
+    const mockUserInstance = {
+      _id: "60d0fe4f5311236168a109cc",
+      email: "test@example.com",
+      role: "User",
+      comparePassword: jest.fn().mockResolvedValue(true),
+    };
+
+    const findOneSpy = jest.spyOn(User, "findOne").mockResolvedValue(mockUserInstance);
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send(loginData);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.message).toBe("Login successful");
+    expect(res.body.data).toEqual({
+      _id: mockUserInstance._id,
+      email: mockUserInstance.email,
+      role: mockUserInstance.role,
+    });
+    expect(res.body.token).toBeDefined();
+    expect(findOneSpy).toHaveBeenCalledWith({ email: "test@example.com" });
+    expect(mockUserInstance.comparePassword).toHaveBeenCalledWith("password123");
+  });
+
+  it("should return 401 if user does not exist", async () => {
+    const loginData = {
+      email: "nonexistent@example.com",
+      password: "password123",
+    };
+
+    const findOneSpy = jest.spyOn(User, "findOne").mockResolvedValue(null);
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send(loginData);
+
+    expect(res.status).toBe(401);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Invalid email or password");
+    expect(findOneSpy).toHaveBeenCalledWith({ email: "nonexistent@example.com" });
+  });
+
+  it("should return 401 if password is incorrect", async () => {
+    const loginData = {
+      email: "test@example.com",
+      password: "wrongpassword",
+    };
+
+    const mockUserInstance = {
+      _id: "60d0fe4f5311236168a109cc",
+      email: "test@example.com",
+      role: "User",
+      comparePassword: jest.fn().mockResolvedValue(false),
+    };
+
+    const findOneSpy = jest.spyOn(User, "findOne").mockResolvedValue(mockUserInstance);
+
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send(loginData);
+
+    expect(res.status).toBe(401);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Invalid email or password");
+    expect(findOneSpy).toHaveBeenCalledWith({ email: "test@example.com" });
+    expect(mockUserInstance.comparePassword).toHaveBeenCalledWith("wrongpassword");
+  });
+});
