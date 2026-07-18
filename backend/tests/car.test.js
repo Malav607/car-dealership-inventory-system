@@ -1,6 +1,12 @@
 const request = require("supertest");
+const jwt = require("jsonwebtoken");
 const app = require("../src/app");
 const Car = require("../src/models/Car");
+
+// Generate tokens for testing
+const jwtSecret = process.env.JWT_SECRET || "default_jwt_secret";
+const adminToken = jwt.sign({ id: "admin_id", role: "Admin" }, jwtSecret);
+const userToken = jwt.sign({ id: "user_id", role: "User" }, jwtSecret);
 
 describe("GET /api/cars", () => {
   beforeEach(() => {
@@ -8,10 +14,11 @@ describe("GET /api/cars", () => {
   });
 
   it("should return an empty list of cars when inventory is empty", async () => {
-    // Mock Car.find to return an empty array without hitting the database
     const findSpy = jest.spyOn(Car, "find").mockResolvedValue([]);
 
-    const res = await request(app).get("/api/cars");
+    const res = await request(app)
+      .get("/api/cars")
+      .set("Authorization", `Bearer ${userToken}`);
     
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -49,7 +56,9 @@ describe("GET /api/cars", () => {
 
     const findSpy = jest.spyOn(Car, "find").mockResolvedValue(mockCars);
 
-    const res = await request(app).get("/api/cars");
+    const res = await request(app)
+      .get("/api/cars")
+      .set("Authorization", `Bearer ${userToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -57,6 +66,11 @@ describe("GET /api/cars", () => {
       data: mockCars,
     });
     expect(findSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return 401 if request is made without a token", async () => {
+    const res = await request(app).get("/api/cars");
+    expect(res.status).toBe(401);
   });
 });
 
@@ -79,7 +93,9 @@ describe("GET /api/cars/search", () => {
       return Promise.resolve(mockCars);
     });
 
-    const res = await request(app).get("/api/cars/search?make=Toyota");
+    const res = await request(app)
+      .get("/api/cars/search?make=Toyota")
+      .set("Authorization", `Bearer ${userToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -87,6 +103,11 @@ describe("GET /api/cars/search", () => {
       data: [{ make: "Toyota", model: "Camry", price: 25000 }],
     });
     expect(findSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return 401 if request is made without a token", async () => {
+    const res = await request(app).get("/api/cars/search?make=Toyota");
+    expect(res.status).toBe(401);
   });
 });
 
@@ -113,6 +134,7 @@ describe("PUT /api/cars/:id", () => {
 
     const res = await request(app)
       .put("/api/cars/60d0fe4f5311236168a109ca")
+      .set("Authorization", `Bearer ${userToken}`)
       .send({
         year: 2023,
         price: 26000,
@@ -136,6 +158,7 @@ describe("PUT /api/cars/:id", () => {
 
     const res = await request(app)
       .put("/api/cars/60d0fe4f5311236168a109cb")
+      .set("Authorization", `Bearer ${userToken}`)
       .send({ price: 27000 });
 
     expect(res.status).toBe(404);
@@ -145,6 +168,13 @@ describe("PUT /api/cars/:id", () => {
     });
     expect(updateSpy).toHaveBeenCalledTimes(1);
   });
+
+  it("should return 401 if request is made without a token", async () => {
+    const res = await request(app)
+      .put("/api/cars/60d0fe4f5311236168a109ca")
+      .send({ price: 27000 });
+    expect(res.status).toBe(401);
+  });
 });
 
 describe("DELETE /api/cars/:id", () => {
@@ -152,7 +182,7 @@ describe("DELETE /api/cars/:id", () => {
     jest.restoreAllMocks();
   });
 
-  it("should delete a car and return the deleted details", async () => {
+  it("should delete a car and return the deleted details (Admin only)", async () => {
     const deletedCar = {
       _id: "60d0fe4f5311236168a109ca",
       make: "Toyota",
@@ -168,7 +198,9 @@ describe("DELETE /api/cars/:id", () => {
 
     const deleteSpy = jest.spyOn(Car, "findByIdAndDelete").mockResolvedValue(deletedCar);
 
-    const res = await request(app).delete("/api/cars/60d0fe4f5311236168a109ca");
+    const res = await request(app)
+      .delete("/api/cars/60d0fe4f5311236168a109ca")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -179,10 +211,24 @@ describe("DELETE /api/cars/:id", () => {
     expect(deleteSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109ca");
   });
 
+  it("should return 403 if user is not an Admin", async () => {
+    const res = await request(app)
+      .delete("/api/cars/60d0fe4f5311236168a109ca")
+      .set("Authorization", `Bearer ${userToken}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Forbidden: Access denied",
+    });
+  });
+
   it("should return 404 if the car to delete is not found", async () => {
     const deleteSpy = jest.spyOn(Car, "findByIdAndDelete").mockResolvedValue(null);
 
-    const res = await request(app).delete("/api/cars/60d0fe4f5311236168a109cb");
+    const res = await request(app)
+      .delete("/api/cars/60d0fe4f5311236168a109cb")
+      .set("Authorization", `Bearer ${adminToken}`);
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({
@@ -190,5 +236,10 @@ describe("DELETE /api/cars/:id", () => {
       message: "Car not found",
     });
     expect(deleteSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should return 401 if request is made without a token", async () => {
+    const res = await request(app).delete("/api/cars/60d0fe4f5311236168a109ca");
+    expect(res.status).toBe(401);
   });
 });
