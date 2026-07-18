@@ -325,3 +325,93 @@ describe("POST /api/cars/:id/purchase", () => {
     expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109cb");
   });
 });
+
+describe("POST /api/cars/:id/restock", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should successfully restock a car and increase its quantity (Admin only)", async () => {
+    const mockCar = {
+      _id: "60d0fe4f5311236168a109ca",
+      make: "Toyota",
+      model: "Camry",
+      price: 25000,
+      quantity: 5,
+      save: jest.fn().mockResolvedValue({
+        _id: "60d0fe4f5311236168a109ca",
+        make: "Toyota",
+        model: "Camry",
+        price: 25000,
+        quantity: 15,
+      }),
+    };
+
+    const findSpy = jest.spyOn(Car, "findById").mockResolvedValue(mockCar);
+
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/restock")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ quantity: 10 });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      success: true,
+      message: "Vehicle restocked successfully",
+      data: {
+        _id: "60d0fe4f5311236168a109ca",
+        make: "Toyota",
+        model: "Camry",
+        price: 25000,
+        quantity: 15,
+      },
+    });
+    expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109ca");
+    expect(mockCar.save).toHaveBeenCalled();
+  });
+
+  it("should return 400 if the restock quantity is missing or invalid", async () => {
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/restock")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ quantity: -5 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Invalid quantity");
+  });
+
+  it("should return 403 if a non-admin user attempts to restock", async () => {
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/restock")
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({ quantity: 10 });
+
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
+    expect(res.body.message).toBe("Forbidden: Access denied");
+  });
+
+  it("should return 404 if the car to restock is not found", async () => {
+    const findSpy = jest.spyOn(Car, "findById").mockResolvedValue(null);
+
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109cb/restock")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ quantity: 10 });
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({
+      success: false,
+      message: "Car not found",
+    });
+    expect(findSpy).toHaveBeenCalledWith("60d0fe4f5311236168a109cb");
+  });
+
+  it("should return 401 if request is made without a token", async () => {
+    const res = await request(app)
+      .post("/api/cars/60d0fe4f5311236168a109ca/restock")
+      .send({ quantity: 10 });
+    expect(res.status).toBe(401);
+  });
+});
