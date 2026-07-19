@@ -17,9 +17,66 @@ const createCar = async (req, res) => {
   }
 };
 
+const getCarById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const car = await Car.findById(id);
+
+    if (!car) {
+      return res.status(404).json({
+        success: false,
+        message: "Car not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: car,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const getCars = async (req, res) => {
   try {
-    const cars = await Car.find();
+    const { page, limit, sort, search, make, fuelType, transmission, category } = req.query;
+    const query = {};
+
+    if (search) {
+      query.$or = [
+        { make: { $regex: new RegExp(search, "i") } },
+        { model: { $regex: new RegExp(search, "i") } },
+        { category: { $regex: new RegExp(search, "i") } },
+        { description: { $regex: new RegExp(search, "i") } },
+      ];
+    }
+    if (make) query.make = { $regex: new RegExp(make, "i") };
+    if (fuelType) query.fuelType = fuelType;
+    if (transmission) query.transmission = transmission;
+    if (category) query.category = { $regex: new RegExp(category, "i") };
+
+    let queryChain = Car.find(query);
+
+    if (sort && typeof queryChain.sort === "function") {
+      let sortOptions = { createdAt: -1 };
+      if (sort === "price_asc") sortOptions = { price: 1 };
+      if (sort === "price_desc") sortOptions = { price: -1 };
+      if (sort === "year_desc") sortOptions = { year: -1 };
+      queryChain = queryChain.sort(sortOptions);
+    }
+
+    if (page && limit && typeof queryChain.skip === "function") {
+      const pageNum = parseInt(page, 10) || 1;
+      const limitNum = parseInt(limit, 10) || 10;
+      queryChain = queryChain.skip((pageNum - 1) * limitNum).limit(limitNum);
+    }
+
+    const cars = await queryChain;
+
     res.status(200).json({
       success: true,
       data: cars,
@@ -32,10 +89,9 @@ const getCars = async (req, res) => {
   }
 };
 
-
 const searchCars = async (req, res) => {
   try {
-    const { make, model, category, minPrice, maxPrice } = req.query;
+    const { make, model, category, minPrice, maxPrice, fuelType, transmission, sort } = req.query;
     const query = {};
 
     if (make) {
@@ -46,6 +102,12 @@ const searchCars = async (req, res) => {
     }
     if (category) {
       query.category = { $regex: new RegExp(category, "i") };
+    }
+    if (fuelType) {
+      query.fuelType = fuelType;
+    }
+    if (transmission) {
+      query.transmission = transmission;
     }
 
     if (minPrice || maxPrice) {
@@ -58,7 +120,18 @@ const searchCars = async (req, res) => {
       }
     }
 
-    const cars = await Car.find(query);
+    let sortOptions = {};
+    if (sort === "price_asc") sortOptions = { price: 1 };
+    if (sort === "price_desc") sortOptions = { price: -1 };
+    if (sort === "year_desc") sortOptions = { year: -1 };
+
+    let queryChain = Car.find(query);
+    if (Object.keys(sortOptions).length > 0) {
+      queryChain = queryChain.sort(sortOptions);
+    }
+
+    const cars = await queryChain;
+
     res.status(200).json({
       success: true,
       data: cars,
@@ -209,6 +282,7 @@ const restockCar = async (req, res) => {
 module.exports = {
   createCar,
   getCars,
+  getCarById,
   searchCars,
   updateCar,
   deleteCar,
