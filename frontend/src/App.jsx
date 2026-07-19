@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Marketplace from "./pages/Marketplace";
 import VehicleDetails from "./pages/VehicleDetails";
+import MyPurchases from "./pages/MyPurchases";
+import OrderDetails from "./pages/OrderDetails";
 
 function App() {
   return (
@@ -25,6 +27,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <VehicleDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-purchases"
+            element={
+              <ProtectedRoute>
+                <MyPurchases />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetails />
               </ProtectedRoute>
             }
           />
