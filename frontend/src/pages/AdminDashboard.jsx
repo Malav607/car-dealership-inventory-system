@@ -642,9 +642,22 @@ const AdminDashboard = () => {
               onChange={(e) => setCarFormData({ ...carFormData, mileage: e.target.value })}
               className="glass-input px-4 py-3 rounded-xl text-sm"
             />
+            <input
+              type="text"
+              placeholder="Color"
+              required
+              value={carFormData.color}
+              onChange={(e) =>
+                setCarFormData({
+                  ...carFormData,
+                  color: e.target.value,
+                })
+              }
+              className="glass-input px-4 py-3 rounded-xl text-sm"
+            />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <select
               value={carFormData.category}
               onChange={(e) => setCarFormData({ ...carFormData, category: e.target.value })}
