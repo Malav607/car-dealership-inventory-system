@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Car, ShoppingBag, ShieldCheck, LogOut, User as UserIcon, Menu, X, Sparkles } from "lucide-react";
+import { Car, ShoppingBag, ShieldCheck, LogOut, User as UserIcon, Menu, X, Sparkles, MessageSquare } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
@@ -18,6 +18,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Marketplace", path: "/", icon: Car },
     { name: "My Purchases", path: "/my-purchases", icon: ShoppingBag },
+    { name: "Rajkot Concierge", path: "/contact", icon: MessageSquare },
   ];
 
   if (user?.role === "Admin") {

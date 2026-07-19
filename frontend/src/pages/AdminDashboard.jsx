@@ -28,8 +28,9 @@ const AdminDashboard = () => {
   const [analytics, setAnalytics] = useState(null);
   const [inventory, setInventory] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("analytics"); // analytics | inventory | orders
+  const [activeTab, setActiveTab] = useState("analytics"); // analytics | inventory | orders | inquiries
 
   // Vehicle Modal (Add/Edit)
   const [isCarModalOpen, setIsCarModalOpen] = useState(false);
@@ -77,10 +78,37 @@ const AdminDashboard = () => {
       });
       const ordersData = await ordersRes.json();
       if (ordersRes.ok) setOrders(ordersData.data || []);
+
+      // Customer Inquiries
+      const inquiriesRes = await fetch(`${API_BASE_URL}/inquiries`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const inquiriesData = await inquiriesRes.json();
+      if (inquiriesRes.ok) setInquiries(inquiriesData.data || []);
     } catch (err) {
       toast.error(err.message || "Failed to load admin telemetry");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateInquiryStatus = async (inquiryId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE_URL}/inquiries/${inquiryId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update inquiry");
+      toast.success(`Inquiry status updated to ${newStatus}`);
+      fetchData();
+    } catch (err) {
+      toast.error(err.message || "Update failed");
     }
   };
 
@@ -270,6 +298,14 @@ const AdminDashboard = () => {
               }`}
             >
               Customer Orders ({orders.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("inquiries")}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === "inquiries" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Inquiries ({inquiries.length})
             </button>
           </div>
         </div>
@@ -507,6 +543,80 @@ const AdminDashboard = () => {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: CUSTOMER INQUIRIES & TEST DRIVE REQUESTS */}
+        {activeTab === "inquiries" && (
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-white">Customer Inquiries & Test Drive Requests</h3>
+
+            <div className="glass-panel rounded-3xl border border-slate-800 overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 bg-slate-900/50 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <th className="p-4">Customer Contact</th>
+                    <th className="p-4">Request Type</th>
+                    <th className="p-4">Vehicle Interest</th>
+                    <th className="p-4">Message / Preferred Date</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4 text-right">Update Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 text-xs">
+                  {inquiries.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-slate-400">
+                        No customer inquiries recorded yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    inquiries.map((inq) => (
+                      <tr key={inq._id} className="hover:bg-slate-900/40 transition-colors">
+                        <td className="p-4">
+                          <span className="font-bold text-white block">{inq.name}</span>
+                          <span className="text-[10px] text-slate-400">{inq.email} • {inq.phone}</span>
+                        </td>
+                        <td className="p-4 font-semibold text-cyan-accent">{inq.type}</td>
+                        <td className="p-4 text-slate-200">
+                          {inq.carDetails ? `${inq.carDetails.make} ${inq.carDetails.model}` : "General Showroom"}
+                        </td>
+                        <td className="p-4 text-slate-300 max-w-xs truncate">
+                          {inq.message}
+                          {inq.preferredDate && (
+                            <span className="block text-[10px] text-purple-400 font-semibold mt-0.5">
+                              Date: {new Date(inq.preferredDate).toLocaleDateString()}
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            inq.status === "Resolved"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : inq.status === "In Progress"
+                              ? "bg-blue-500/20 text-blue-400"
+                              : "bg-amber-500/20 text-amber-400"
+                          }`}>
+                            {inq.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <select
+                            value={inq.status}
+                            onChange={(e) => handleUpdateInquiryStatus(inq._id, e.target.value)}
+                            className="glass-input px-3 py-1.5 rounded-xl text-xs font-medium text-slate-200 focus:outline-none cursor-pointer"
+                          >
+                            <option value="Pending" className="bg-obsidian-950">Pending</option>
+                            <option value="In Progress" className="bg-obsidian-950">In Progress</option>
+                            <option value="Resolved" className="bg-obsidian-950">Resolved</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
+import InquiryModal from "../components/InquiryModal";
 import {
   ArrowLeft,
   Star,
@@ -41,6 +42,7 @@ const VehicleDetails = () => {
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
 
   // Purchase Modal State
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
@@ -279,20 +281,30 @@ const VehicleDetails = () => {
               </div>
             </div>
 
-            {/* Purchase CTA */}
-            {car.quantity > 0 ? (
+            {/* Action Buttons */}
+            <div className="space-y-2.5">
+              {car.quantity > 0 ? (
+                <button
+                  onClick={() => setIsPurchaseModalOpen(true)}
+                  className="w-full py-4 bg-gradient-to-r from-cyan-accent to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-obsidian-950 font-bold text-sm rounded-2xl shadow-glow transition-all flex items-center justify-center gap-2"
+                >
+                  <Zap className="w-4 h-4 fill-current" />
+                  Proceed to Buy Vehicle
+                </button>
+              ) : (
+                <div className="w-full py-4 bg-rose-500/20 text-rose-400 text-center rounded-2xl font-bold text-sm border border-rose-500/30">
+                  Vehicle Currently Out of Stock
+                </div>
+              )}
+
               <button
-                onClick={() => setIsPurchaseModalOpen(true)}
-                className="w-full py-4 bg-gradient-to-r from-cyan-accent to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-obsidian-950 font-bold text-sm rounded-2xl shadow-glow transition-all flex items-center justify-center gap-2"
+                onClick={() => setIsInquiryModalOpen(true)}
+                className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-cyan-accent font-semibold text-xs rounded-2xl border border-cyan-accent/30 transition-all flex items-center justify-center gap-2"
               >
-                <Zap className="w-4 h-4 fill-current" />
-                Proceed to Buy Vehicle
+                <Calendar className="w-4 h-4" />
+                Book Test Drive / Showroom Inquiry
               </button>
-            ) : (
-              <div className="w-full py-4 bg-rose-500/20 text-rose-400 text-center rounded-2xl font-bold text-sm border border-rose-500/30">
-                Vehicle Currently Out of Stock
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -439,6 +451,8 @@ const VehicleDetails = () => {
           </div>
         </form>
       </Modal>
+
+      <InquiryModal isOpen={isInquiryModalOpen} onClose={() => setIsInquiryModalOpen(false)} car={car} />
 
       <Footer />
     </div>
