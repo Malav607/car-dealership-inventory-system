@@ -247,31 +247,16 @@ const AdminDashboard = () => {
     setIsCarModalOpen(true);
   };
 
-  // Analytics Chart Data
+  // Dynamic Analytics Data from MongoDB
   const chartData = analytics?.categoryValuation || [];
 
-  // Generate Revenue Trend Data from orders
-  const revenueTrendData = [
-    { month: "Jan", revenue: 145000, orders: 2 },
-    { month: "Feb", revenue: 210000, orders: 3 },
-    { month: "Mar", revenue: 380000, orders: 4 },
-    { month: "Apr", revenue: 290000, orders: 3 },
-    { month: "May", revenue: 520000, orders: 6 },
-    { month: "Jun", revenue: 440000, orders: 5 },
-    { month: "Jul", revenue: analytics?.totalRevenue || 610000, orders: orders.length || 7 },
-  ];
+  const revenueTrendData = analytics?.monthlyAnalytics && analytics.monthlyAnalytics.length > 0
+    ? analytics.monthlyAnalytics
+    : [{ month: "Current", revenue: analytics?.totalRevenue || 0, orders: orders.length || 0, inquiries: analytics?.totalInquiries || 0 }];
 
-  // Order Status Breakdown Data
-  const orderStatusCounts = orders.reduce((acc, curr) => {
-    const st = curr.status || "Order Confirmed";
-    acc[st] = (acc[st] || 0) + 1;
-    return acc;
-  }, {});
-
-  const orderStatusPieData = Object.keys(orderStatusCounts).map((status) => ({
-    name: status,
-    value: orderStatusCounts[status],
-  }));
+  const orderStatusPieData = analytics?.orderStatusBreakdown && analytics.orderStatusBreakdown.length > 0
+    ? analytics.orderStatusBreakdown
+    : [{ name: "Order Confirmed", value: orders.length || 1 }];
 
   return (
     <div className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans">

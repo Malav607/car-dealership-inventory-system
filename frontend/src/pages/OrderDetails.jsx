@@ -236,8 +236,8 @@ const OrderDetails = () => {
             <div className="h-96 rounded-2xl overflow-hidden border border-slate-700">
               <MapContainer center={dealershipCoords} zoom={deliveryCoords ? 8 : 12} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+                  url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
                 />
                 <Marker position={dealershipCoords}>
                   <Popup>

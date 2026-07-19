@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Car = require("../models/Car");
+const Inquiry = require("../models/Inquiry");
 const { getDeliveryDetailsForCity } = require("../utils/distanceCalculator");
 
 // Create a new vehicle order (Purchase)
@@ -239,6 +240,78 @@ const getAdminAnalytics = async (req, res) => {
       categoryStats[c.category].totalValuation += c.price * c.quantity;
     });
 
+    const categoryValuation = Object.keys(categoryStats).map((cat) => ({
+      category: cat,
+      valuation: categoryStats[cat].totalValuation,
+      count: categoryStats[cat].count,
+    }));
+
+    // MongoDB aggregation for monthly orders and revenue
+    const monthlyOrdersAggregation = await Order.aggregate([
+      { $match: { status: { $ne: "Cancelled" } } },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          revenue: { $sum: "$totalAmount" },
+          orders: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+
+    // MongoDB aggregation for monthly inquiries
+    const monthlyInquiriesAggregation = await Inquiry.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          inquiries: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
+    ]);
+
+    // MongoDB aggregation for order status breakdown
+    const orderStatusBreakdown = await Order.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          value: { $sum: 1 },
+        },
+      },
+      { $project: { _id: 0, name: "$_id", value: 1 } },
+    ]);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    // Combine monthly aggregations
+    const monthlyMap = {};
+    monthlyOrdersAggregation.forEach((item) => {
+      const key = `${monthNames[item._id.month - 1]} ${item._id.year}`;
+      monthlyMap[key] = {
+        month: key,
+        revenue: item.revenue,
+        orders: item.orders,
+        inquiries: 0,
+      };
+    });
+
+    monthlyInquiriesAggregation.forEach((item) => {
+      const key = `${monthNames[item._id.month - 1]} ${item._id.year}`;
+      if (!monthlyMap[key]) {
+        monthlyMap[key] = { month: key, revenue: 0, orders: 0, inquiries: item.inquiries };
+      } else {
+        monthlyMap[key].inquiries = item.inquiries;
+      }
+    });
+
+    const monthlyAnalytics = Object.values(monthlyMap);
+
     res.status(200).json({
       success: true,
       data: {
@@ -249,6 +322,10 @@ const getAdminAnalytics = async (req, res) => {
         lowStockCount: lowStockCars.length,
         lowStockCars,
         categoryStats,
+        categoryValuation,
+        monthlyAnalytics,
+        orderStatusBreakdown,
+        totalInquiries: await Inquiry.countDocuments(),
         recentOrders: orders.slice(0, 5),
       },
     });

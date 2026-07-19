@@ -190,8 +190,8 @@ const Contact = () => {
             <div className="h-64 rounded-3xl overflow-hidden glass-panel border border-slate-800">
               <MapContainer center={rajkotCoords} zoom={13} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.google.com/maps">Google Maps</a>'
+                  url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
                 />
                 <Marker position={rajkotCoords}>
                   <Popup>
