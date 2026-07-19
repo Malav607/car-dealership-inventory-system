@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const Contact = () => {
   const [inquiryType, setInquiryType] = useState("Showroom Visit");

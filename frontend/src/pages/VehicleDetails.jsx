@@ -34,7 +34,7 @@ L.Icon.Default.mergeOptions({
 
 import Breadcrumbs from "../components/Breadcrumbs";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const VehicleDetails = () => {
   const { id } = useParams();
@@ -242,9 +242,8 @@ const VehicleDetails = () => {
                   <button
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative w-24 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
-                      activeImageIndex === idx ? "border-cyan-accent shadow-glow scale-105" : "border-slate-800 opacity-60 hover:opacity-100"
-                    }`}
+                    className={`relative w-24 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${activeImageIndex === idx ? "border-cyan-accent shadow-glow scale-105" : "border-slate-800 opacity-60 hover:opacity-100"
+                      }`}
                   >
                     <img src={img} alt="thumb" className="w-full h-full object-cover" />
                   </button>

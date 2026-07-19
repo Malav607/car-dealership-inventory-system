@@ -25,7 +25,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const RAJKOT_FLAGSHIP_DEALERSHIP = {
   name: "Apex Luxury Motors Flagship Showroom",
@@ -196,18 +196,16 @@ const OrderDetails = () => {
               return (
                 <div
                   key={step}
-                  className={`p-4 rounded-2xl border flex flex-col items-center text-center transition-all ${
-                    isCurrent
+                  className={`p-4 rounded-2xl border flex flex-col items-center text-center transition-all ${isCurrent
                       ? "bg-cyan-accent/10 border-cyan-accent shadow-glow text-cyan-accent"
                       : isCompleted
-                      ? "bg-slate-900/80 border-slate-700 text-slate-200"
-                      : "bg-slate-950/40 border-slate-800 text-slate-600"
-                  }`}
+                        ? "bg-slate-900/80 border-slate-700 text-slate-200"
+                        : "bg-slate-950/40 border-slate-800 text-slate-600"
+                    }`}
                 >
                   <div
-                    className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs mb-2 ${
-                      isCompleted ? "bg-cyan-accent text-obsidian-950" : "bg-slate-800 text-slate-500"
-                    }`}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs mb-2 ${isCompleted ? "bg-cyan-accent text-obsidian-950" : "bg-slate-800 text-slate-500"
+                      }`}
                   >
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
                   </div>

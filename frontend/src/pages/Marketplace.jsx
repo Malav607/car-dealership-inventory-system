@@ -23,7 +23,7 @@ import {
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const Marketplace = () => {
   const navigate = useNavigate();
@@ -163,7 +163,7 @@ const Marketplace = () => {
       {/* HERO SECTION */}
       <section className="relative overflow-hidden pt-12 pb-20 border-b border-slate-800/80 bg-gradient-to-b from-obsidian-900 via-obsidian-950 to-obsidian-950">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-glow/20 via-transparent to-transparent pointer-events-none" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Hero Text */}
@@ -241,7 +241,7 @@ const Marketplace = () => {
                   className="w-full h-80 sm:h-96 object-cover rounded-2xl transform group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-transparent to-transparent rounded-2xl" />
-                
+
                 <div className="absolute bottom-6 left-6 right-6 p-4 glass-panel rounded-2xl border border-slate-700/80 flex items-center justify-between">
                   <div>
                     <span className="text-xs font-semibold text-cyan-accent uppercase tracking-wider">Featured Flagship</span>
@@ -387,11 +387,10 @@ const Marketplace = () => {
                       {/* Stock Badge */}
                       <div className="absolute top-4 left-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            car.quantity > 0
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${car.quantity > 0
                               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                               : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
-                          }`}
+                            }`}
                         >
                           {car.quantity > 0 ? `${car.quantity} Available` : "Sold Out"}
                         </span>

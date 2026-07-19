@@ -3,7 +3,7 @@ import Modal from "./Modal";
 import { MessageSquare, PhoneCall, Calendar, Car, Send } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const InquiryModal = ({ isOpen, onClose, car }) => {
   const [inquiryType, setInquiryType] = useState("Test Drive");

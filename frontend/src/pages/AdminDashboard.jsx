@@ -38,7 +38,7 @@ import {
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const COLORS = ["#00F0FF", "#3B82F6", "#8B5CF6", "#10B981", "#F43F5E", "#F59E0B"];
 
@@ -277,25 +277,22 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === "analytics" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
-              }`}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "analytics" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
+                }`}
             >
               Analytics
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === "inventory" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
-              }`}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "inventory" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
+                }`}
             >
               Vehicle Inventory ({inventory.length})
             </button>
             <button
               onClick={() => setActiveTab("orders")}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === "orders" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
-              }`}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "orders" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
+                }`}
             >
               Order Management ({orders.length})
             </button>
@@ -511,9 +508,8 @@ const AdminDashboard = () => {
                       <td className="p-4 font-bold text-cyan-accent">${c.price?.toLocaleString()}</td>
                       <td className="p-4 font-bold text-white">{c.quantity} units</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          c.quantity > 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"
-                        }`}>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${c.quantity > 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"
+                          }`}>
                           {c.quantity > 0 ? "In Stock" : "Sold Out"}
                         </span>
                       </td>
@@ -573,9 +569,8 @@ const AdminDashboard = () => {
                       <td className="p-4 font-bold text-white">{ord.carDetails?.make} {ord.carDetails?.model}</td>
                       <td className="p-4 font-extrabold text-white">${ord.totalAmount?.toLocaleString()}</td>
                       <td className="p-4">
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${
-                          ord.status === "Delivered" ? "bg-emerald-500/20 text-emerald-400" : "bg-cyan-500/20 text-cyan-400"
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold ${ord.status === "Delivered" ? "bg-emerald-500/20 text-emerald-400" : "bg-cyan-500/20 text-cyan-400"
+                          }`}>
                           {ord.status}
                         </span>
                       </td>

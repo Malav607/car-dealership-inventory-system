@@ -8,7 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 import Breadcrumbs from "../components/Breadcrumbs";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const MyPurchases = () => {
   const [orders, setOrders] = useState([]);
