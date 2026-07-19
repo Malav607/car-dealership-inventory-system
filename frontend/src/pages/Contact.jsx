@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { MapPin, Phone, Mail, Clock, Send, ShieldCheck, Building } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
 const API_BASE_URL = "http://localhost:5000/api";
@@ -60,7 +61,13 @@ const Contact = () => {
   const rajkotCoords = [22.3039, 70.8022];
 
   return (
-    <div className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans"
+    >
       <Toaster position="top-right" toastOptions={{ style: { background: "#0F172A", color: "#F8FAFC", border: "1px solid rgba(0,240,255,0.3)" } }} />
       <Navbar />
 
@@ -199,7 +206,7 @@ const Contact = () => {
       </main>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 

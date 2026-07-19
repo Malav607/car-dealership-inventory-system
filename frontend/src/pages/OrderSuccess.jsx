@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { CheckCircle2, Sparkles, Truck, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
 
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -31,7 +32,13 @@ const OrderSuccess = () => {
   }, [orderId]);
 
   return (
-    <div className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans relative overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans relative overflow-hidden"
+    >
       <Navbar />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 flex-1 w-full space-y-8 z-10 my-auto">
@@ -97,7 +104,7 @@ const OrderSuccess = () => {
       </main>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 };
 
