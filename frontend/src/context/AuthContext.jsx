@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://https://car-dealership-inventory-system-hmd3.onrender.com/api/auth/login", {
+      const response = await fetch("https://car-dealership-inventory-system-hmd3.onrender.com/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password, role = "User") => {
     try {
-      const response = await fetch("http://https://car-dealership-inventory-system-hmd3.onrender.com/api/auth/register", {
+      const response = await fetch("https://car-dealership-inventory-system-hmd3.onrender.com/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

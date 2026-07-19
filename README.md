@@ -81,7 +81,7 @@ cd backend
 npm install
 npm run seed     # Seeds vehicles with Rajkot Dealership defaults & admin credentials
 npm test         # Executes 39 Jest unit & integration tests
-npm start        # Launches server on http://https://car-dealership-inventory-system-hmd3.onrender.com
+npm start        # Launches server on https://car-dealership-inventory-system-hmd3.onrender.com
 ```
 
 ### 2. Setup Frontend

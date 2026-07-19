@@ -23,7 +23,7 @@ import {
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
+const API_BASE_URL = "https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const Marketplace = () => {
   const navigate = useNavigate();
@@ -388,8 +388,8 @@ const Marketplace = () => {
                       <div className="absolute top-4 left-4">
                         <span
                           className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${car.quantity > 0
-                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
                             }`}
                         >
                           {car.quantity > 0 ? `${car.quantity} Available` : "Sold Out"}

@@ -25,7 +25,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
+const API_BASE_URL = "https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const RAJKOT_FLAGSHIP_DEALERSHIP = {
   name: "Apex Luxury Motors Flagship Showroom",
@@ -197,10 +197,10 @@ const OrderDetails = () => {
                 <div
                   key={step}
                   className={`p-4 rounded-2xl border flex flex-col items-center text-center transition-all ${isCurrent
-                      ? "bg-cyan-accent/10 border-cyan-accent shadow-glow text-cyan-accent"
-                      : isCompleted
-                        ? "bg-slate-900/80 border-slate-700 text-slate-200"
-                        : "bg-slate-950/40 border-slate-800 text-slate-600"
+                    ? "bg-cyan-accent/10 border-cyan-accent shadow-glow text-cyan-accent"
+                    : isCompleted
+                      ? "bg-slate-900/80 border-slate-700 text-slate-200"
+                      : "bg-slate-950/40 border-slate-800 text-slate-600"
                     }`}
                 >
                   <div

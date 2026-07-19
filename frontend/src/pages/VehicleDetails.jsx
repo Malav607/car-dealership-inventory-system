@@ -34,7 +34,7 @@ L.Icon.Default.mergeOptions({
 
 import Breadcrumbs from "../components/Breadcrumbs";
 
-const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
+const API_BASE_URL = "https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const VehicleDetails = () => {
   const { id } = useParams();

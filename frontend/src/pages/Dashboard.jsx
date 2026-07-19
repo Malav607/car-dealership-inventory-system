@@ -65,8 +65,8 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const url = searchParams
-        ? `http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/search?${searchParams}`
-        : "http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars";
+        ? `https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/search?${searchParams}`
+        : "https://car-dealership-inventory-system-hmd3.onrender.com/api/cars";
 
       const response = await fetch(url, {
         headers: {
@@ -113,7 +113,7 @@ const Dashboard = () => {
   const handlePurchase = async (carId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${carId}/purchase`, {
+      const response = await fetch(`https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${carId}/purchase`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -190,8 +190,8 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const url = editingCar
-        ? `http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${editingCar._id}`
-        : "http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars";
+        ? `https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${editingCar._id}`
+        : "https://car-dealership-inventory-system-hmd3.onrender.com/api/cars";
       const method = editingCar ? "PUT" : "POST";
 
       const payload = {
@@ -239,7 +239,7 @@ const Dashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${carId}`, {
+      const response = await fetch(`https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${carId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -264,7 +264,7 @@ const Dashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${selectedCarForRestock._id}/restock`, {
+      const response = await fetch(`https://car-dealership-inventory-system-hmd3.onrender.com/api/cars/${selectedCarForRestock._id}/restock`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -366,8 +366,8 @@ const Dashboard = () => {
                   type="button"
                   onClick={() => setIsFilterOpen(!isFilterOpen)}
                   className={`flex items-center space-x-2 px-5 py-3.5 border rounded-2xl text-sm font-semibold transition-all duration-300 ${isFilterOpen
-                      ? "bg-slate-900 border-slate-700 text-white"
-                      : "bg-slate-950 border-slate-900 text-slate-400 hover:text-slate-200"
+                    ? "bg-slate-900 border-slate-700 text-white"
+                    : "bg-slate-950 border-slate-900 text-slate-400 hover:text-slate-200"
                     }`}
                 >
                   <SlidersHorizontal className="h-4 w-4" />
@@ -551,8 +551,8 @@ const Dashboard = () => {
                   onClick={() => handlePurchase(car._id)}
                   disabled={car.quantity <= 0}
                   className={`w-full py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider flex items-center justify-center space-x-2 transition-all duration-300 ${car.quantity > 0
-                      ? "bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-950/20 hover:shadow-violet-500/10"
-                      : "bg-slate-950 border border-slate-900 text-slate-600 cursor-not-allowed"
+                    ? "bg-violet-600 hover:bg-violet-500 text-white shadow-lg shadow-violet-950/20 hover:shadow-violet-500/10"
+                    : "bg-slate-950 border border-slate-900 text-slate-600 cursor-not-allowed"
                     }`}
                 >
                   {car.quantity > 0 ? (

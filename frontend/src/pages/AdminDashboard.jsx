@@ -38,7 +38,7 @@ import {
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
+const API_BASE_URL = "https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const COLORS = ["#00F0FF", "#3B82F6", "#8B5CF6", "#10B981", "#F43F5E", "#F59E0B"];
 

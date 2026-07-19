@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { CheckCircle2, Sparkles, Truck, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 
-const API_BASE_URL = "http://https://car-dealership-inventory-system-hmd3.onrender.com/api";
+const API_BASE_URL = "https://car-dealership-inventory-system-hmd3.onrender.com/api";
 
 const OrderSuccess = () => {
   const { orderId } = useParams();
