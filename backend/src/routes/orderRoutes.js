@@ -19,6 +19,6 @@ router.get("/my-orders", getMyOrders);
 router.get("/analytics", authorize("Admin"), getAdminAnalytics);
 router.get("/", authorize("Admin"), getAllOrders);
 router.get("/:id", getOrderById);
-router.patch("/:id/status", authorize("Admin"), updateOrderStatus);
+router.put("/:id/status", authorize("Admin"), updateOrderStatus);
 
 module.exports = router;
