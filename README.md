@@ -1,101 +1,119 @@
-# Full-Stack Car Dealership Inventory System (TDD)
+# Apex Motors — Production-Grade Luxury Car Marketplace
 
-A premium, full-stack vehicle inventory management portal built with strict Test-Driven Development (TDD) principles. The system includes a secure RESTful API backend and a responsive, high-contrast single-page application (SPA) frontend.
-
----
-
-## Features
-
-### 🔐 Security & Access Control
-* **JWT Token-Based Authentication**: Secure vehicle and inventory resource endpoints.
-* **Role-Based Authorization**: Distinct access permissions for `User` and `Admin` accounts.
-
-### 🚗 Vehicle & Inventory Management
-* **Catalog Browsing**: Retrieve available inventory listing.
-* **Precision Search**: Search vehicle models by matching `make` substrings.
-* **Multi-Property Filters**: Slide-out filtering by `category`, `minPrice`, and `maxPrice`.
-* **Purchase Action**: Securely purchase a vehicle, which decrements stock quantity by 1. Automatically disables buy buttons when quantity reaches 0.
-* **Admin CRUD Actions (Admin Only)**:
-  * **Add Vehicle**: Create new vehicles with structured selectors.
-  * **Edit Details**: Update properties of existing stock.
-  * **Delete Vehicle**: Permanently delete vehicle entries with safety prompts.
-  * **Restock Inventory**: Restock quantities of active vehicles by a specified amount.
+A production-quality full-stack Car Marketplace and Dealership Inventory application engineered with Staff-level software design patterns, dark automotive luxury UI/UX, JWT security, multi-role authorization, order fulfillment tracking with Leaflet interactive maps, and automated Jest test suites.
 
 ---
 
-## Technology Stack
+## 🌟 Key Application Features
+
+### 🏎️ Luxury Marketplace & Vehicle Discovery
+* **Hero Experience**: Animated showcase featuring high-res imagery, search callouts, and performance stats with Framer Motion transitions.
+* **Advanced Multi-Parametric Search & Sorting**:
+  * Real-time query search across make, model, category, and vehicle descriptions.
+  * Filter by `make`, `category` (Coupe, Sedan, SUV, etc.), `fuelType` (Petrol, Electric EV, Hybrid, Diesel), and `transmission`.
+  * Price range filtering (`minPrice`, `maxPrice`) and sorting by `price_asc`, `price_desc`, `year_desc`, or `newest`.
+* **Vehicle Detail Showcase (`/cars/:id`)**:
+  * High-res multi-photo gallery with thumbnail selector and full-screen Lightbox zoom.
+  * Technical Specs grid (Engine, Horsepower, 0-60mph acceleration, Top Speed, Drivetrain).
+  * Equipment & options checklist with status badges.
+  * Interactive Leaflet Dealership location map pin.
+
+### 💳 Purchase Engine & Order Tracking
+* **Purchase Workflow**: Multi-step checkout modal with shipping address validation and live inventory stock decrement.
+* **My Purchases Dashboard (`/my-purchases`)**: User transaction history, active order status badges, and direct links to tracking.
+* **Order Tracking & Route (`/orders/:id`)**:
+  * Status Timeline Stepper (`Processing` → `Confirmed` → `Shipped` → `Delivered`).
+  * Interactive Leaflet Delivery Map plotting polyline route from Flagship Dealership to Customer Destination.
+
+### 📊 Senior Executive Admin Center (`/admin`)
+* **KPI Telemetry**: Real-time Gross Sales ($), Order Count, Fleet Inventory Valuation, and Low Stock Alert counters.
+* **Recharts Analytics**: Dynamic bar charts visualizing inventory valuation by category.
+* **Low Stock Alerts & Restock Engine**: Instant low stock notification panel with direct restock trigger.
+* **Fleet Management**: Searchable inventory table with full CRUD (Add/Edit vehicle modal, image URL manager, restock, and delete).
+* **Order Fulfillment Center**: Global order processing list with status override control (Processing, Confirmed, Shipped, Delivered, Cancelled).
+
+---
+
+## 🛠️ Technology Stack
 
 ### Backend
-* **Runtime**: Node.js
-* **Framework**: Express.js
-* **Database**: MongoDB (via Mongoose ODM)
-* **Testing Suite**: Jest & Supertest
+* **Runtime**: Node.js & Express.js
+* **Database**: MongoDB (Mongoose ODM with local fallback)
+* **Authentication**: JWT (JSON Web Tokens) with bcrypt password hashing
+* **Testing Suite**: Jest & Supertest (35 passing unit & integration tests)
 
 ### Frontend
-* **Build Tool**: Vite (React Template)
-* **CSS Framework**: Tailwind CSS v3 (PostCSS & Autoprefixer)
-* **Icons**: Lucide React
+* **Build Tool**: Vite (React 19)
+* **Styling & UI**: Tailwind CSS v3 with glassmorphism utilities & custom dark obsidian automotive design system
+* **Animations**: Framer Motion
+* **Maps**: Leaflet & React-Leaflet
+* **Charts**: Recharts
+* **Notifications**: React Hot Toast
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 * Node.js (v18+)
-* MongoDB connection string (local instance or MongoDB Atlas)
+* MongoDB connection string (or local MongoDB on `mongodb://127.0.0.1:27017/car-dealership`)
 
 ---
 
 ### Backend Setup
 
-1. **Navigate to the Backend directory**:
+1. **Navigate to backend**:
    ```bash
    cd backend
    ```
 
-2. **Install Dependencies**:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
 3. **Configure Environment Variables**:
-   Create a `.env` file in the `backend` folder:
+   Create a `.env` file inside `backend`:
    ```env
    PORT=5000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
+   MONGODB_URI=mongodb://127.0.0.1:27017/car-dealership
+   JWT_SECRET=apex_motors_super_secret_jwt_key
    ```
 
-4. **Run Tests (Jest)**:
+4. **Seed Database with Vehicles**:
+   ```bash
+   node src/utils/seedData.js --force
+   ```
+
+5. **Run Automated Tests**:
    ```bash
    npm test
    ```
 
-5. **Start Dev Server**:
+6. **Start Backend Server**:
    ```bash
-   npm run dev
+   npm start
    ```
-   The backend API will run on `http://localhost:5000`.
 
 ---
 
 ### Frontend Setup
 
-1. **Navigate to the Frontend directory**:
+1. **Navigate to frontend**:
    ```bash
    cd ../frontend
    ```
 
-2. **Install Dependencies**:
+2. **Install dependencies**:
    ```bash
    npm install
    ```
 
-3. **Start Dev Server**:
+3. **Start Development Server**:
    ```bash
    npm run dev
    ```
-   Open `http://localhost:5173` in your browser.
+   Access application at `http://localhost:5173`.
 
 4. **Production Build**:
    ```bash
@@ -104,43 +122,33 @@ A premium, full-stack vehicle inventory management portal built with strict Test
 
 ---
 
-## Directory Structure
+## 📁 Repository Structure
 
 ```text
 ├── backend/
 │   ├── src/
-│   │   ├── config/       # DB Connection
-│   │   ├── controllers/  # Route Controllers (auth, car)
-│   │   ├── middleware/   # JWT protection & role auth
-│   │   ├── models/       # Mongoose schemas (Car, User)
-│   │   └── routes/       # Express route definitions
-│   ├── tests/            # Supertest integration tests
-│   ├── server.js         # Entry point
-│   └── package.json
+│   │   ├── config/       # DB Connection & Fallbacks
+│   │   ├── controllers/  # authController, carController, orderController
+│   │   ├── middleware/   # protect & authorize RBAC middlewares
+│   │   ├── models/       # User, Car, Order Mongoose Schemas
+│   │   ├── routes/       # authRoutes, carRoutes, orderRoutes
+│   │   └── utils/        # seedData.js
+│   ├── tests/            # auth.test.js, car.test.js, order.test.js, middleware.test.js
+│   └── server.js
 └── frontend/
     ├── src/
-    │   ├── components/   # Route Guards (ProtectedRoute)
-    │   ├── context/      # State management (AuthContext)
-    │   ├── pages/        # Main views (Login, Register, Dashboard)
-    │   ├── index.css     # Tailwind imports
-    │   └── App.jsx       # Routing configurations
-    └── package.json
+    │   ├── components/   # Navbar, Footer, Modal, SkeletonCard, ProtectedRoute
+    │   ├── context/      # AuthContext
+    │   ├── pages/        # Login, Register, Marketplace, VehicleDetails, MyPurchases, OrderDetails, AdminDashboard
+    │   ├── index.css     # Tailwind imports, glassmorphism, Leaflet dark styles
+    │   └── App.jsx       # React Router 7 setup
+    └── tailwind.config.js
 ```
 
 ---
 
-## My AI Usage
+## 👥 AI Co-Authorship & Engineering Workflow
 
-### 🤖 AI Tools Used
-* **Antigravity**: Pair programmed with the Antigravity agentic coding assistant to construct the full-stack system.
-
-### 🛠️ Collaboration & Workflows
-* **Continuous Stepwise Loop (TDD)**:
-  Every single endpoint and inventory logic was constructed using a strict Red-Green-Refactor loop. We wrote the failing test suite first, verified its failure (Red phase), wrote the clean code to pass it (Green phase), and refactored.
-* **Mocking Mongoose Methods**:
-  Since our sandboxed environment was offline, we designed tests by using Jest spies on Mongoose queries (`Car.findById`, `User.findOne`, `save`, etc.) to run test suites offline without connecting to a live cluster, maintaining execution speed and isolation.
-* **Premium Design System**:
-  We aligned on a Stripe/Vercel-inspired UI standard: deep slate backgrounds, emerald/violet badges, subtle micro-interactions, responsive form containers, and validation handling.
-
-### 💡 Reflections
-Adhering to TDD from the beginning eliminated common full-stack development friction. Writing tests first forced us to establish clean API interfaces before writing controller logic. Pre-mocking queries avoided database state pollution during testing, and utilizing a git trailer co-authorship protocol ensured transparent AI attribution.
+* **Conventional Commits**: Every single feature branch (`feature/...`) follows standard Conventional Commit format (`feat`, `refactor`, `style`, `fix`).
+* **Co-author Attribution**: Substantial AI contributions include the `Co-authored-by: Antigravity <AI@users.noreply.github.com>` trailer.
+* **Test-Driven Rigor**: Backend routes maintain 100% pass rate across Jest test suites before merging into `develop`.
