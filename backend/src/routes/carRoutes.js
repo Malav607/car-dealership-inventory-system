@@ -14,6 +14,6 @@ router.get("/:id", getCarById);
 router.put("/:id", updateCar);
 router.delete("/:id", authorize("Admin"), deleteCar);
 router.post("/:id/purchase", purchaseCar);
-router.post("/:id/restock", authorize("Admin"), restockCar);
+router.patch("/:id/restock", authorize("Admin"), restockCar);
 
 module.exports = router;
