@@ -29,19 +29,17 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true, trim: true },
       state: { type: String, required: true, trim: true },
       zipCode: { type: String, required: true, trim: true },
-      country: { type: String, default: "India", trim: true },
+      country: { type: String, trim: true },
     },
     deliveryCoords: {
-      lat: { type: Number, default: 23.0225 },
-      lng: { type: Number, default: 72.5714 },
+      lat: { type: Number },
+      lng: { type: Number },
     },
     distanceKm: {
       type: Number,
-      default: 215,
     },
     estimatedDeliveryDays: {
       type: Number,
-      default: 2,
     },
     status: {
       type: String,
@@ -50,7 +48,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      default: "Razorpay / Credit Card (Simulated)",
+      default: "Credit Card (Simulated)",
     },
     paymentStatus: {
       type: String,
@@ -59,7 +57,6 @@ const orderSchema = new mongoose.Schema(
     },
     estimatedDeliveryDate: {
       type: Date,
-      default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // +2 days
     },
   },
   {

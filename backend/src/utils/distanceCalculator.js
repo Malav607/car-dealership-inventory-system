@@ -32,11 +32,14 @@ const calculateDistanceKm = (lat1, lon1, lat2, lon2) => {
 
 const getDeliveryDetailsForCity = (cityName) => {
   const normalized = (cityName || "").trim().toLowerCase();
-  let coords = CITY_COORDINATES[normalized];
+  const coords = CITY_COORDINATES[normalized];
 
   if (!coords) {
-    // Fallback based on hash or default to Ahmedabad coords
-    coords = { lat: 23.0225, lng: 72.5714 };
+    return {
+      coords: null,
+      distanceKm: null,
+      deliveryDays: null,
+    };
   }
 
   const distanceKm = calculateDistanceKm(

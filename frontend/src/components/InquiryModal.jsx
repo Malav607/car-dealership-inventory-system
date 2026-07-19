@@ -44,7 +44,7 @@ const InquiryModal = ({ isOpen, onClose, car }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to submit request");
 
-      toast.success("Request received! Our Rajkot Showroom Concierge will contact you.");
+      toast.success("Request received! Our dealership team will contact you.");
       onClose();
       setName("");
       setPhone("");
@@ -57,14 +57,14 @@ const InquiryModal = ({ isOpen, onClose, car }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={car ? `Book / Inquire: ${car.make} ${car.model}` : "Contact Rajkot Showroom"}>
+    <Modal isOpen={isOpen} onClose={onClose} title={car ? `Inquire: ${car.make} ${car.model}` : "Contact Dealership"}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {car && (
           <div className="p-3 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-3 text-xs">
             <img src={(car.images && car.images.length > 0) ? car.images[0] : ""} alt="car" className="w-16 h-12 object-cover rounded-lg" />
             <div>
               <span className="font-bold text-white text-sm">{car.make} {car.model}</span>
-              <p className="text-cyan-accent">${car.price?.toLocaleString()} • Rajkot Inventory</p>
+              <p className="text-cyan-accent">${car.price?.toLocaleString()} • Dealership Inventory</p>
             </div>
           </div>
         )}
@@ -76,10 +76,10 @@ const InquiryModal = ({ isOpen, onClose, car }) => {
             onChange={(e) => setInquiryType(e.target.value)}
             className="glass-input w-full px-4 py-3 rounded-xl text-sm text-slate-100 cursor-pointer"
           >
-            <option value="Test Drive" className="bg-obsidian-950">Book a Test Drive (Rajkot)</option>
+            <option value="Test Drive" className="bg-obsidian-950">Book a Test Drive</option>
             <option value="Showroom Visit" className="bg-obsidian-950">Schedule Showroom Visit</option>
-            <option value="Callback Request" className="bg-obsidian-950">Request Immediate Callback</option>
-            <option value="Vehicle Inquiry" className="bg-obsidian-950">Vehicle Pricing & Offer Inquiry</option>
+            <option value="Callback Request" className="bg-obsidian-950">Request Callback</option>
+            <option value="Vehicle Inquiry" className="bg-obsidian-950">Vehicle Pricing Inquiry</option>
             <option value="General Question" className="bg-obsidian-950">General Question</option>
           </select>
         </div>
@@ -106,7 +106,7 @@ const InquiryModal = ({ isOpen, onClose, car }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             type="tel"
-            placeholder="Phone Number (+91) *"
+            placeholder="Phone Number *"
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}

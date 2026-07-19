@@ -74,18 +74,18 @@ const Contact = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-cyan-accent bg-cyan-accent/10 border border-cyan-accent/30">
-            Showroom Concierge
+            Contact Dealership
           </span>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Contact Apex Motors Rajkot</h1>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight">Contact Apex Motors</h1>
           <p className="text-sm text-slate-400">
-            Book a private showroom appointment, request a test drive, or inquire about luxury fleet availability in Gujarat.
+            Book a showroom visit, request a test drive, or submit an inquiry to our Rajkot dealership team.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Form */}
           <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
-            <h3 className="text-xl font-bold text-white">Send Showroom Inquiry</h3>
+            <h3 className="text-xl font-bold text-white">Send Inquiry</h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -95,10 +95,10 @@ const Contact = () => {
                   onChange={(e) => setInquiryType(e.target.value)}
                   className="glass-input w-full px-4 py-3 rounded-xl text-sm cursor-pointer"
                 >
-                  <option value="Showroom Visit" className="bg-obsidian-950">Book Private Showroom Visit</option>
+                  <option value="Showroom Visit" className="bg-obsidian-950">Schedule Showroom Visit</option>
                   <option value="Test Drive" className="bg-obsidian-950">Request Test Drive</option>
-                  <option value="Callback Request" className="bg-obsidian-950">Request Manager Callback</option>
-                  <option value="Vehicle Inquiry" className="bg-obsidian-950">Vehicle Offer / Pricing</option>
+                  <option value="Callback Request" className="bg-obsidian-950">Request Callback</option>
+                  <option value="Vehicle Inquiry" className="bg-obsidian-950">Vehicle Pricing Inquiry</option>
                   <option value="General Question" className="bg-obsidian-950">General Question</option>
                 </select>
               </div>
@@ -125,7 +125,7 @@ const Contact = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input
                   type="tel"
-                  placeholder="Phone Number (+91) *"
+                  placeholder="Phone Number *"
                   required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -154,7 +154,7 @@ const Contact = () => {
                 className="w-full py-4 bg-gradient-to-r from-cyan-accent to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-obsidian-950 font-bold rounded-2xl text-xs shadow-glow flex items-center justify-center gap-2"
               >
                 <Send className="w-4 h-4" />
-                {submitting ? "Sending Request..." : "Submit Showroom Inquiry"}
+                {submitting ? "Sending Request..." : "Submit Inquiry"}
               </button>
             </form>
           </div>
@@ -164,7 +164,7 @@ const Contact = () => {
             <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Building className="w-5 h-5 text-cyan-accent" />
-                <span>Rajkot Flagship Showroom</span>
+                <span>Rajkot Dealership Location</span>
               </h3>
 
               <div className="space-y-3 text-xs text-slate-300">
@@ -178,7 +178,7 @@ const Contact = () => {
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Mail className="w-4 h-4 text-cyan-accent shrink-0" />
-                  <span>rajkot.concierge@apexmotors.com</span>
+                  <span>contact@apexmotors.com</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-emerald-400 font-semibold pt-1">
                   <Clock className="w-4 h-4" />
@@ -195,7 +195,7 @@ const Contact = () => {
                 />
                 <Marker position={rajkotCoords}>
                   <Popup>
-                    <strong>Apex Luxury Motors Flagship</strong>
+                    <strong>Apex Motors Dealership</strong>
                     <p>Rajkot, Gujarat</p>
                   </Popup>
                 </Marker>

@@ -38,14 +38,19 @@ const MyPurchases = () => {
 
   const getStatusBadge = (status) => {
     switch (status) {
+      case "Order Confirmed":
       case "Processing":
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Processing Order</span>;
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Order Confirmed</span>;
+      case "Preparing Vehicle":
       case "Confirmed":
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">Order Confirmed</span>;
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">Preparing Vehicle</span>;
+      case "In Transit":
       case "Shipped":
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">In Transit</span>;
       case "Delivered":
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Delivered</span>;
+      case "Cancelled":
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">Cancelled</span>;
       default:
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300">{status}</span>;
     }
@@ -125,6 +130,12 @@ const MyPurchases = () => {
                           <MapPin className="w-3.5 h-3.5 text-slate-500" />
                           {order.shippingAddress?.city}, {order.shippingAddress?.state}
                         </span>
+                        {order.distanceKm && (
+                          <span className="flex items-center gap-1 text-cyan-accent font-semibold">
+                            <Truck className="w-3.5 h-3.5 text-cyan-accent" />
+                            {order.distanceKm} km
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

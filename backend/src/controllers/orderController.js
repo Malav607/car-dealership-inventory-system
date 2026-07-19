@@ -41,10 +41,12 @@ const createOrder = async (req, res) => {
 
     // Compute Rajkot delivery route distance & ETA
     const deliveryMeta = getDeliveryDetailsForCity(shippingAddress.city);
-    const finalCoords = deliveryCoords || deliveryMeta.coords;
-    const distanceKm = deliveryMeta.distanceKm;
-    const estimatedDeliveryDays = deliveryMeta.deliveryDays;
-    const estimatedDeliveryDate = new Date(Date.now() + estimatedDeliveryDays * 24 * 60 * 60 * 1000);
+    const finalCoords = deliveryCoords || deliveryMeta.coords || undefined;
+    const distanceKm = deliveryMeta.distanceKm !== null ? deliveryMeta.distanceKm : undefined;
+    const estimatedDeliveryDays = deliveryMeta.deliveryDays !== null ? deliveryMeta.deliveryDays : undefined;
+    const estimatedDeliveryDate = estimatedDeliveryDays
+      ? new Date(Date.now() + estimatedDeliveryDays * 24 * 60 * 60 * 1000)
+      : undefined;
 
     const order = await Order.create({
       user: userId,
@@ -57,15 +59,12 @@ const createOrder = async (req, res) => {
         image: carImage,
       },
       totalAmount: car.price,
-      shippingAddress: {
-        ...shippingAddress,
-        country: shippingAddress.country || "India",
-      },
+      shippingAddress,
       deliveryCoords: finalCoords,
       distanceKm,
       estimatedDeliveryDays,
       estimatedDeliveryDate,
-      paymentMethod: paymentMethod || "Razorpay / Credit Card (Simulated)",
+      paymentMethod: paymentMethod || "Credit Card (Simulated)",
       paymentStatus: "Paid",
       status: "Order Confirmed",
     });

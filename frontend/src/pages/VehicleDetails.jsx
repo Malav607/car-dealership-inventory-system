@@ -177,11 +177,11 @@ const VehicleDetails = () => {
     : ["https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80"];
 
   const dealership = car.dealership || {
-    name: "Apex Beverly Hills Luxury",
-    address: "9500 Wilshire Blvd, Beverly Hills, CA 90212",
-    phone: "+1 (310) 555-9110",
-    lat: 34.0671,
-    lng: -118.4005,
+    name: "Apex Motors Dealership",
+    address: "150 Feet Ring Road, Near Kalavad Road, Rajkot, Gujarat 360005, India",
+    phone: "+91 (281) 555-APEX",
+    lat: 22.3039,
+    lng: 70.8022,
   };
 
   const specs = car.specs || {

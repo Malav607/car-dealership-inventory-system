@@ -272,9 +272,9 @@ const AdminDashboard = () => {
           <div>
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-purple-400" />
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Executive Control Center</span>
+              <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Admin Control</span>
             </div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">Admin Telemetry & Fleet Manager</h1>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">Inventory & Order Management</h1>
           </div>
 
           <div className="flex items-center gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
@@ -284,7 +284,7 @@ const AdminDashboard = () => {
                 activeTab === "analytics" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
               }`}
             >
-              Analytics KPI
+              Analytics
             </button>
             <button
               onClick={() => setActiveTab("inventory")}
@@ -292,7 +292,7 @@ const AdminDashboard = () => {
                 activeTab === "inventory" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
               }`}
             >
-              Inventory Fleet ({inventory.length})
+              Vehicle Inventory ({inventory.length})
             </button>
             <button
               onClick={() => setActiveTab("orders")}
@@ -300,7 +300,7 @@ const AdminDashboard = () => {
                 activeTab === "orders" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
               }`}
             >
-              Customer Orders ({orders.length})
+              Order Management ({orders.length})
             </button>
             <button
               onClick={() => setActiveTab("inquiries")}
@@ -308,7 +308,7 @@ const AdminDashboard = () => {
                 activeTab === "inquiries" ? "bg-purple-600 text-white shadow-glow" : "text-slate-400 hover:text-white"
               }`}
             >
-              Inquiries ({inquiries.length})
+              Inquiry Management ({inquiries.length})
             </button>
           </div>
         </div>

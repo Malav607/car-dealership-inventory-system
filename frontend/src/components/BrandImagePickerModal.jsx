@@ -9,9 +9,9 @@ const BrandImagePickerModal = ({ isOpen, onClose, selectedBrand, onSelectImage }
   const images = getBrandPresetImages(activeBrand);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Brand Image Asset Library" maxWidth="max-w-4xl">
+    <Modal isOpen={isOpen} onClose={onClose} title="Select Brand Image" maxWidth="max-w-4xl">
       <div className="space-y-6">
-        <p className="text-xs text-slate-400">Select a high-resolution preset image from our curated 15-brand asset collection.</p>
+        <p className="text-xs text-slate-400">Select a high-resolution image preset from our 15-brand vehicle catalog.</p>
 
         {/* Brand Selector Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">

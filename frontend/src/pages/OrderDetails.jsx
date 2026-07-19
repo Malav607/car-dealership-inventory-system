@@ -107,14 +107,14 @@ const OrderDetails = () => {
 
   const deliveryCoords = order.deliveryCoords?.lat && order.deliveryCoords?.lng
     ? [order.deliveryCoords.lat, order.deliveryCoords.lng]
-    : [23.0225, 72.5714]; // Default Ahmedabad
+    : null;
 
-  const routePositions = [dealershipCoords, deliveryCoords];
-  const distanceKm = order.distanceKm || 215;
-  const estimatedDeliveryDays = order.estimatedDeliveryDays || 2;
+  const routePositions = deliveryCoords ? [dealershipCoords, deliveryCoords] : [];
+  const distanceKm = typeof order.distanceKm === "number" ? order.distanceKm : null;
+  const estimatedDeliveryDays = typeof order.estimatedDeliveryDays === "number" ? order.estimatedDeliveryDays : null;
   const etaDate = order.estimatedDeliveryDate
     ? new Date(order.estimatedDeliveryDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
-    : "Within 2 Days";
+    : null;
 
   return (
     <div className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans">
@@ -131,7 +131,7 @@ const OrderDetails = () => {
         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold uppercase text-cyan-accent">Live Delivery Order</span>
+              <span className="text-xs font-bold uppercase text-cyan-accent">Vehicle Delivery Order</span>
               <span className="text-xs text-slate-500">• Order #{order._id.slice(-8)}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
@@ -159,20 +159,28 @@ const OrderDetails = () => {
                 <Truck className="w-5 h-5 text-cyan-accent" />
                 <span>Vehicle Delivery Progress</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Dispatched from Rajkot Flagship Showroom</p>
+              <p className="text-xs text-slate-400 mt-0.5">Dispatched from Rajkot Showroom</p>
             </div>
 
-            <div className="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800 text-xs">
-              <div>
-                <span className="text-slate-500 text-[10px] uppercase font-bold block">Distance</span>
-                <span className="font-bold text-cyan-accent">{distanceKm} km</span>
+            {(distanceKm !== null || etaDate !== null) && (
+              <div className="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800 text-xs">
+                {distanceKm !== null && (
+                  <div>
+                    <span className="text-slate-500 text-[10px] uppercase font-bold block">Distance</span>
+                    <span className="font-bold text-cyan-accent">{distanceKm} km</span>
+                  </div>
+                )}
+                {distanceKm !== null && etaDate !== null && <div className="h-6 w-px bg-slate-800" />}
+                {etaDate !== null && (
+                  <div>
+                    <span className="text-slate-500 text-[10px] uppercase font-bold block">Estimated Arrival</span>
+                    <span className="font-bold text-emerald-400">
+                      {etaDate} {estimatedDeliveryDays ? `(${estimatedDeliveryDays} Day${estimatedDeliveryDays > 1 ? "s" : ""})` : ""}
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className="h-6 w-px bg-slate-800" />
-              <div>
-                <span className="text-slate-500 text-[10px] uppercase font-bold block">Estimated Arrival</span>
-                <span className="font-bold text-emerald-400">{etaDate} ({estimatedDeliveryDays} Day{estimatedDeliveryDays > 1 ? "s" : ""})</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Stepper Grid */}
@@ -216,13 +224,13 @@ const OrderDetails = () => {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <Navigation className="w-5 h-5 text-cyan-accent" />
-                <span>Rajkot to {order.shippingAddress?.city} Transporter Route</span>
+                <span>Rajkot to {order.shippingAddress?.city} Delivery Route</span>
               </h3>
-              <span className="text-xs font-semibold text-cyan-accent">GPS Telemetry Active</span>
+              <span className="text-xs font-semibold text-cyan-accent">Live Route Active</span>
             </div>
 
             <div className="h-96 rounded-2xl overflow-hidden border border-slate-700">
-              <MapContainer center={dealershipCoords} zoom={8} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
+              <MapContainer center={dealershipCoords} zoom={deliveryCoords ? 8 : 12} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -230,22 +238,24 @@ const OrderDetails = () => {
                 <Marker position={dealershipCoords}>
                   <Popup>
                     <div className="p-1 text-xs">
-                      <strong className="text-cyan-accent font-bold">Dispatch Location</strong>
+                      <strong className="text-cyan-accent font-bold">Dispatch Dealership</strong>
                       <p>Apex Luxury Motors Flagship</p>
                       <p className="text-[10px] text-slate-400">150 Feet Ring Road, Rajkot, Gujarat</p>
                     </div>
                   </Popup>
                 </Marker>
-                <Marker position={deliveryCoords}>
-                  <Popup>
-                    <div className="p-1 text-xs">
-                      <strong className="text-emerald-400 font-bold">Delivery Destination</strong>
-                      <p>{order.shippingAddress?.street}</p>
-                      <p className="text-[10px] text-slate-400">{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-                <Polyline positions={routePositions} color="#00F0FF" weight={4} dashArray="8, 8" />
+                {deliveryCoords && (
+                  <Marker position={deliveryCoords}>
+                    <Popup>
+                      <div className="p-1 text-xs">
+                        <strong className="text-emerald-400 font-bold">Delivery Destination</strong>
+                        <p>{order.shippingAddress?.street}</p>
+                        <p className="text-[10px] text-slate-400">{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
+                {deliveryCoords && <Polyline positions={routePositions} color="#00F0FF" weight={4} dashArray="8, 8" />}
               </MapContainer>
             </div>
           </div>
@@ -272,23 +282,25 @@ const OrderDetails = () => {
               <div className="text-xs text-slate-300 space-y-1">
                 <p className="font-bold text-white">{order.shippingAddress?.street}</p>
                 <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
-                <p>{order.shippingAddress?.country || "India"}</p>
+                {order.shippingAddress?.country && <p>{order.shippingAddress.country}</p>}
               </div>
             </div>
 
             <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3 text-xs">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Logistics Summary</h4>
-              <div className="flex justify-between text-slate-300">
-                <span>Distance from Rajkot:</span>
-                <span className="font-bold text-white">{distanceKm} km</span>
-              </div>
+              {distanceKm !== null && (
+                <div className="flex justify-between text-slate-300">
+                  <span>Distance from Rajkot:</span>
+                  <span className="font-bold text-white">{distanceKm} km</span>
+                </div>
+              )}
               <div className="flex justify-between text-slate-300">
                 <span>Carrier Service:</span>
-                <span className="font-bold text-white">Enclosed Covered Flatbed</span>
+                <span className="font-bold text-white">Enclosed Flatbed Transporter</span>
               </div>
               <div className="flex justify-between text-slate-300">
-                <span>Shipping Fee:</span>
-                <span className="font-bold text-emerald-400">Complimentary</span>
+                <span>Delivery Option:</span>
+                <span className="font-bold text-emerald-400">Standard Dealer Delivery</span>
               </div>
             </div>
           </div>

@@ -54,7 +54,7 @@ const OrderSuccess = () => {
             </span>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Congratulations On Your New Vehicle!</h1>
             <p className="text-sm text-slate-300 max-w-lg mx-auto">
-              Your order has been officially confirmed by Apex Luxury Motors Rajkot Flagship Showroom.
+              Your order has been confirmed by Apex Motors Rajkot Dealership.
             </p>
           </div>
 
@@ -77,8 +77,17 @@ const OrderSuccess = () => {
                 )}
                 <div>
                   <h4 className="font-bold text-white">{order.carDetails?.make} {order.carDetails?.model} ({order.carDetails?.year})</h4>
-                  <p className="text-xs text-slate-400">Dispatched from: 150 Feet Ring Road, Rajkot, Gujarat</p>
-                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">Estimated Delivery: {order.estimatedDeliveryDays || 2} Days ({order.distanceKm || 215} km)</p>
+                  <p className="text-xs text-slate-400">Dispatch Location: Rajkot, Gujarat</p>
+                  {order.estimatedDeliveryDays || order.distanceKm ? (
+                    <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                      {order.estimatedDeliveryDays ? `Estimated Delivery: ${order.estimatedDeliveryDays} Day${order.estimatedDeliveryDays > 1 ? "s" : ""}` : ""}
+                      {order.distanceKm ? ` (${order.distanceKm} km)` : ""}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                      Status: {order.status}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

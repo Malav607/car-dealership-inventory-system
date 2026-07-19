@@ -50,19 +50,19 @@ const Footer = () => {
 
           {/* Showroom Contacts */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-200 mb-4">Flagship Showroom</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-200 mb-4">Dealership Location</h4>
             <ul className="space-y-3 text-xs">
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />
-                <span>9500 Wilshire Blvd, Beverly Hills, CA 90212</span>
+                <span>150 Feet Ring Road, Near Kalavad Road, Rajkot, Gujarat 360005, India</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-cyan-accent shrink-0" />
-                <span>+1 (800) 555-APEX</span>
+                <span>+91 (281) 555-APEX</span>
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-cyan-accent shrink-0" />
-                <span>concierge@apexmotors.com</span>
+                <span>contact@apexmotors.com</span>
               </li>
             </ul>
           </div>

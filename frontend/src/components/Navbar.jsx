@@ -15,15 +15,17 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const navLinks = [
-    { name: "Marketplace", path: "/", icon: Car },
-    { name: "My Purchases", path: "/my-purchases", icon: ShoppingBag },
-    { name: "Rajkot Concierge", path: "/contact", icon: MessageSquare },
-  ];
-
-  if (user?.role === "Admin") {
-    navLinks.push({ name: "Admin Control", path: "/admin", icon: ShieldCheck });
-  }
+  const navLinks = user?.role === "Admin"
+    ? [
+        { name: "Marketplace", path: "/", icon: Car },
+        { name: "Admin Dashboard", path: "/admin", icon: ShieldCheck },
+        { name: "Contact Dealership", path: "/contact", icon: MessageSquare },
+      ]
+    : [
+        { name: "Marketplace", path: "/", icon: Car },
+        { name: "My Purchases", path: "/my-purchases", icon: ShoppingBag },
+        { name: "Contact Dealership", path: "/contact", icon: MessageSquare },
+      ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -86,7 +88,7 @@ const Navbar = () => {
                     user?.role === "Admin" ? "text-purple-400" : "text-cyan-accent"
                   }`}
                 >
-                  {user?.role === "Admin" ? "Executive Admin" : "Rajkot Client"}
+                  {user?.role === "Admin" ? "Admin" : "Customer"}
                 </span>
               </div>
             </div>
@@ -98,18 +100,20 @@ const Navbar = () => {
                   <p className="text-xs font-bold text-white">Logged in as</p>
                   <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                 </div>
-                <Link to="/my-purchases" className="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-accent flex items-center gap-2">
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  My Vehicle Purchases
-                </Link>
+                {user?.role !== "Admin" && (
+                  <Link to="/my-purchases" className="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-accent flex items-center gap-2">
+                    <ShoppingBag className="w-3.5 h-3.5" />
+                    My Purchases
+                  </Link>
+                )}
                 <Link to="/contact" className="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-accent flex items-center gap-2">
                   <MessageSquare className="w-3.5 h-3.5" />
-                  Rajkot Showroom Concierge
+                  Contact Dealership
                 </Link>
                 {user?.role === "Admin" && (
                   <Link to="/admin" className="w-full text-left px-3 py-2 rounded-xl text-xs text-purple-400 hover:bg-purple-900/20 flex items-center gap-2 font-semibold">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    Admin Control Center
+                    Admin Dashboard
                   </Link>
                 )}
                 <button
