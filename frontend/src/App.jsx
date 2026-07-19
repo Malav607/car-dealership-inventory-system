@@ -8,6 +8,7 @@ import Marketplace from "./pages/Marketplace";
 import VehicleDetails from "./pages/VehicleDetails";
 import MyPurchases from "./pages/MyPurchases";
 import OrderDetails from "./pages/OrderDetails";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -43,6 +44,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrderDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <AdminDashboard />
               </ProtectedRoute>
             }
           />
