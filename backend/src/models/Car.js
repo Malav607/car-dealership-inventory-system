@@ -88,11 +88,11 @@ const carSchema = new mongoose.Schema(
       ],
     },
     dealership: {
-      name: { type: String, default: "Apex Automotive Flagship" },
-      address: { type: String, default: "100 Grand Boulevard, Beverly Hills, CA 90210" },
-      phone: { type: String, default: "+1 (800) 555-APEX" },
-      lat: { type: Number, default: 34.0736 },
-      lng: { type: Number, default: -118.4004 },
+      name: { type: String, default: "Apex Luxury Motors Flagship Showroom" },
+      address: { type: String, default: "150 Feet Ring Road, Near Kalavad Road, Rajkot, Gujarat 360005, India" },
+      phone: { type: String, default: "+91 (281) 555-APEX" },
+      lat: { type: Number, default: 22.3039 },
+      lng: { type: Number, default: 70.8022 },
     },
     rating: {
       type: Number,

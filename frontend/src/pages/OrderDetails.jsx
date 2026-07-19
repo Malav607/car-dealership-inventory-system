@@ -2,7 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { ArrowLeft, Clock, MapPin, Truck, CheckCircle2, Package, ShieldCheck, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  MapPin,
+  Truck,
+  CheckCircle2,
+  Package,
+  ShieldCheck,
+  Building,
+  Navigation,
+  Sparkles,
+} from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import L from "leaflet";
 import toast, { Toaster } from "react-hot-toast";
@@ -15,6 +26,13 @@ L.Icon.Default.mergeOptions({
 });
 
 const API_BASE_URL = "http://localhost:5000/api";
+
+const RAJKOT_FLAGSHIP_DEALERSHIP = {
+  name: "Apex Luxury Motors Flagship Showroom",
+  address: "150 Feet Ring Road, Near Kalavad Road, Rajkot, Gujarat 360005, India",
+  phone: "+91 (281) 555-APEX",
+  coords: [22.3039, 70.8022],
+};
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -49,7 +67,7 @@ const OrderDetails = () => {
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center space-y-4">
           <div className="w-12 h-12 border-4 border-cyan-accent border-t-transparent rounded-full animate-spin shadow-glow" />
-          <span className="text-sm font-semibold text-cyan-accent uppercase tracking-wider">Loading Order Status...</span>
+          <span className="text-sm font-semibold text-cyan-accent uppercase tracking-wider">Loading Delivery Telemetry...</span>
         </div>
         <Footer />
       </div>
@@ -61,7 +79,7 @@ const OrderDetails = () => {
       <div className="min-h-screen bg-obsidian-950 flex flex-col text-slate-100">
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <h2 className="text-2xl font-bold">Order Not Found</h2>
+          <h2 className="text-2xl font-bold">Order Record Not Found</h2>
           <Link to="/my-purchases" className="mt-4 px-6 py-2 bg-cyan-accent text-obsidian-950 font-bold rounded-xl text-xs">
             Return to My Purchases
           </Link>
@@ -71,18 +89,32 @@ const OrderDetails = () => {
     );
   }
 
-  const steps = ["Processing", "Confirmed", "Shipped", "Delivered"];
-  const currentStepIndex = steps.indexOf(order.status) !== -1 ? steps.indexOf(order.status) : 0;
+  // Modern Order Life-cycle Statuses
+  const steps = ["Order Confirmed", "Preparing Vehicle", "In Transit", "Delivered"];
 
-  const dealershipCoords = order.car?.dealership
+  // Normalize current step index for backwards compatibility
+  let currentStepIndex = steps.indexOf(order.status);
+  if (currentStepIndex === -1) {
+    if (order.status === "Processing") currentStepIndex = 0;
+    else if (order.status === "Confirmed") currentStepIndex = 1;
+    else if (order.status === "Shipped") currentStepIndex = 2;
+    else currentStepIndex = 0;
+  }
+
+  const dealershipCoords = order.car?.dealership?.lat && order.car?.dealership?.lng
     ? [order.car.dealership.lat, order.car.dealership.lng]
-    : [34.0671, -118.4005]; // Beverly Hills Flagship
+    : RAJKOT_FLAGSHIP_DEALERSHIP.coords;
 
-  const deliveryCoords = order.deliveryCoords
+  const deliveryCoords = order.deliveryCoords?.lat && order.deliveryCoords?.lng
     ? [order.deliveryCoords.lat, order.deliveryCoords.lng]
-    : [34.0522, -118.2437]; // User Destination
+    : [23.0225, 72.5714]; // Default Ahmedabad
 
   const routePositions = [dealershipCoords, deliveryCoords];
+  const distanceKm = order.distanceKm || 215;
+  const estimatedDeliveryDays = order.estimatedDeliveryDays || 2;
+  const etaDate = order.estimatedDeliveryDate
+    ? new Date(order.estimatedDeliveryDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
+    : "Within 2 Days";
 
   return (
     <div className="min-h-screen bg-obsidian-950 text-slate-100 flex flex-col font-sans">
@@ -95,36 +127,56 @@ const OrderDetails = () => {
           <span>Back to My Purchases</span>
         </Link>
 
-        {/* ORDER HEADER */}
+        {/* ORDER SUMMARY BANNER */}
         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold uppercase text-cyan-accent">Official Invoice</span>
-              <span className="text-xs text-slate-500">• ID: #{order._id}</span>
+              <span className="text-xs font-bold uppercase text-cyan-accent">Live Delivery Order</span>
+              <span className="text-xs text-slate-500">• Order #{order._id.slice(-8)}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
               {order.carDetails?.make} {order.carDetails?.model} ({order.carDetails?.year})
             </h1>
-            <p className="text-xs text-slate-400 mt-1">Placed on {new Date(order.createdAt).toLocaleString()}</p>
+            <p className="text-xs text-slate-400 mt-1">Purchased on {new Date(order.createdAt).toLocaleString()}</p>
           </div>
 
-          <div className="text-left md:text-right">
-            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Paid</span>
+          <div className="flex flex-col md:items-end gap-2">
+            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Payment</span>
             <div className="text-2xl font-extrabold text-white">${order.totalAmount?.toLocaleString()}</div>
-            <span className="inline-block mt-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Payment Completed
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Payment Verified
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* STATUS TIMELINE STEPPER */}
+        {/* MODERN TIMELINE STEPPER */}
         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Truck className="w-5 h-5 text-cyan-accent" />
-            <span>Fulfillment & Delivery Timeline</span>
-          </h3>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <Truck className="w-5 h-5 text-cyan-accent" />
+                <span>Vehicle Delivery Progress</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">Dispatched from Rajkot Flagship Showroom</p>
+            </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
+            <div className="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800 text-xs">
+              <div>
+                <span className="text-slate-500 text-[10px] uppercase font-bold block">Distance</span>
+                <span className="font-bold text-cyan-accent">{distanceKm} km</span>
+              </div>
+              <div className="h-6 w-px bg-slate-800" />
+              <div>
+                <span className="text-slate-500 text-[10px] uppercase font-bold block">Estimated Arrival</span>
+                <span className="font-bold text-emerald-400">{etaDate} ({estimatedDeliveryDays} Day{estimatedDeliveryDays > 1 ? "s" : ""})</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Stepper Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {steps.map((step, idx) => {
               const isCompleted = idx <= currentStepIndex;
               const isCurrent = idx === currentStepIndex;
@@ -140,14 +192,16 @@ const OrderDetails = () => {
                       : "bg-slate-950/40 border-slate-800 text-slate-600"
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs mb-2 ${
-                    isCompleted ? "bg-cyan-accent text-obsidian-950" : "bg-slate-800 text-slate-500"
-                  }`}>
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs mb-2 ${
+                      isCompleted ? "bg-cyan-accent text-obsidian-950" : "bg-slate-800 text-slate-500"
+                    }`}
+                  >
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
                   </div>
                   <span className="text-xs font-bold uppercase tracking-wider">{step}</span>
                   <span className="text-[10px] opacity-75 mt-0.5">
-                    {isCurrent ? "Active Stage" : isCompleted ? "Completed" : "Pending"}
+                    {isCurrent ? "In Progress" : isCompleted ? "Completed" : "Scheduled"}
                   </span>
                 </div>
               );
@@ -155,34 +209,40 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {/* DELIVERY ROUTE MAP & ADDRESS */}
+        {/* LEAFLET ROUTE MAP & DETAILS */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Map Column */}
+          {/* Map */}
           <div className="lg:col-span-8 glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-cyan-accent" />
-                <span>Estimated Home Delivery Route</span>
+                <Navigation className="w-5 h-5 text-cyan-accent" />
+                <span>Rajkot to {order.shippingAddress?.city} Transporter Route</span>
               </h3>
-              <span className="text-xs font-semibold text-emerald-400">En Route via Enclosed Transporter</span>
+              <span className="text-xs font-semibold text-cyan-accent">GPS Telemetry Active</span>
             </div>
 
-            <div className="h-80 rounded-2xl overflow-hidden border border-slate-700">
-              <MapContainer center={dealershipCoords} zoom={10} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
+            <div className="h-96 rounded-2xl overflow-hidden border border-slate-700">
+              <MapContainer center={dealershipCoords} zoom={8} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Marker position={dealershipCoords}>
                   <Popup>
-                    <strong>Dispatch Dealership</strong>
-                    <p>Beverly Hills Flagship</p>
+                    <div className="p-1 text-xs">
+                      <strong className="text-cyan-accent font-bold">Dispatch Location</strong>
+                      <p>Apex Luxury Motors Flagship</p>
+                      <p className="text-[10px] text-slate-400">150 Feet Ring Road, Rajkot, Gujarat</p>
+                    </div>
                   </Popup>
                 </Marker>
                 <Marker position={deliveryCoords}>
                   <Popup>
-                    <strong>Destination Address</strong>
-                    <p>{order.shippingAddress?.street}, {order.shippingAddress?.city}</p>
+                    <div className="p-1 text-xs">
+                      <strong className="text-emerald-400 font-bold">Delivery Destination</strong>
+                      <p>{order.shippingAddress?.street}</p>
+                      <p className="text-[10px] text-slate-400">{order.shippingAddress?.city}, {order.shippingAddress?.state}</p>
+                    </div>
                   </Popup>
                 </Marker>
                 <Polyline positions={routePositions} color="#00F0FF" weight={4} dashArray="8, 8" />
@@ -190,36 +250,45 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          {/* Address & Payment Info Column */}
+          {/* Dealership & Delivery Summary */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Destination Address</h3>
-              <div className="text-xs text-slate-300 space-y-1">
-                <p className="font-semibold text-slate-100">{order.shippingAddress?.street}</p>
-                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
-                <p>{order.shippingAddress?.country || "United States"}</p>
+            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <Building className="w-4 h-4 text-cyan-accent" />
+                <span>Dispatch Dealership</span>
+              </h4>
+              <div className="text-xs space-y-1">
+                <p className="font-bold text-white text-sm">{RAJKOT_FLAGSHIP_DEALERSHIP.name}</p>
+                <p className="text-slate-400">{RAJKOT_FLAGSHIP_DEALERSHIP.address}</p>
+                <p className="text-cyan-accent font-semibold pt-1">{RAJKOT_FLAGSHIP_DEALERSHIP.phone}</p>
               </div>
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">Payment Breakdown</h3>
-              <div className="text-xs space-y-2 text-slate-300">
-                <div className="flex justify-between">
-                  <span>Method:</span>
-                  <span className="text-slate-100 font-semibold">{order.paymentMethod}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Vehicle Base Price:</span>
-                  <span className="text-slate-100">${order.totalAmount?.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Shipping & Delivery:</span>
-                  <span className="text-emerald-400 font-semibold">Complimentary</span>
-                </div>
-                <div className="pt-2 border-t border-slate-800 flex justify-between font-bold text-sm text-white">
-                  <span>Total Amount Paid:</span>
-                  <span className="text-cyan-accent">${order.totalAmount?.toLocaleString()}</span>
-                </div>
+            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-cyan-accent" />
+                <span>Customer Delivery Address</span>
+              </h4>
+              <div className="text-xs text-slate-300 space-y-1">
+                <p className="font-bold text-white">{order.shippingAddress?.street}</p>
+                <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
+                <p>{order.shippingAddress?.country || "India"}</p>
+              </div>
+            </div>
+
+            <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3 text-xs">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Logistics Summary</h4>
+              <div className="flex justify-between text-slate-300">
+                <span>Distance from Rajkot:</span>
+                <span className="font-bold text-white">{distanceKm} km</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>Carrier Service:</span>
+                <span className="font-bold text-white">Enclosed Covered Flatbed</span>
+              </div>
+              <div className="flex justify-between text-slate-300">
+                <span>Shipping Fee:</span>
+                <span className="font-bold text-emerald-400">Complimentary</span>
               </div>
             </div>
           </div>

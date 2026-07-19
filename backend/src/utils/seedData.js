@@ -5,7 +5,14 @@ const path = require("path");
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 const Car = require("../models/Car");
-const User = require("../models/User");
+
+const RAJKOT_DEALERSHIP = {
+  name: "Apex Luxury Motors Flagship Showroom",
+  address: "150 Feet Ring Road, Near Kalavad Road, Rajkot, Gujarat 360005, India",
+  phone: "+91 (281) 555-APEX",
+  lat: 22.3039,
+  lng: 70.8022,
+};
 
 const initialCars = [
   {
@@ -23,75 +30,25 @@ const initialCars = [
     images: [
       "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80",
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1611244419377-b0a760c19719?auto=format&fit=crop&w=1200&q=80"
     ],
-    description: "The peak of naturally aspirated performance. Motorsport aerodynamics, active rear-wing DRS, and ultra-lightweight magnesium construction.",
+    description: "Naturally aspirated 4.0L flat-six producing 518 HP with active DRS wing aerodynamics and magnesium Weissach wheels.",
     specs: {
       engine: "4.0L Naturally Aspirated Boxer-6",
       horsepower: 518,
       acceleration: "3.0s 0-60mph",
       topSpeed: "184 mph",
       seating: 2,
-      drivetrain: "RWD"
+      drivetrain: "RWD",
     },
     features: [
       "PDK 7-Speed Transmission",
       "Carbon Fiber Bucket Seats",
       "Weissach Package",
       "Front Axle Lift System",
-      "Carbon Ceramic Brakes (PCCB)"
     ],
-    dealership: {
-      name: "Apex Beverly Hills Luxury",
-      address: "9500 Wilshire Blvd, Beverly Hills, CA 90212",
-      phone: "+1 (310) 555-9110",
-      lat: 34.0671,
-      lng: -118.4005
-    },
+    dealership: RAJKOT_DEALERSHIP,
     rating: 4.9,
-    reviewsCount: 34
-  },
-  {
-    make: "Tesla",
-    model: "Model S Plaid",
-    year: 2024,
-    price: 89990,
-    mileage: 1200,
-    fuelType: "Electric",
-    transmission: "Automatic",
-    color: "Solid Black",
-    category: "Sedan",
-    quantity: 4,
-    status: "Available",
-    images: [
-      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1536700503339-1e4b06520771?auto=format&fit=crop&w=1200&q=80"
-    ],
-    description: "Tri-motor all-wheel drive platform with torque vectoring and over 1,000 horsepower for unprecedented acceleration.",
-    specs: {
-      engine: "Tri-Motor Electric Architecture",
-      horsepower: 1020,
-      acceleration: "1.99s 0-60mph",
-      topSpeed: "200 mph",
-      seating: 5,
-      drivetrain: "AWD"
-    },
-    features: [
-      "Full Self-Driving Capability",
-      "Yoke Steering Wheel",
-      "22-Speaker Premium Audio",
-      "Gaming Computer Console",
-      "Adaptive Air Suspension"
-    ],
-    dealership: {
-      name: "Apex Silicon Valley Experience Center",
-      address: "3000 El Camino Real, Palo Alto, CA 94306",
-      phone: "+1 (650) 555-8375",
-      lat: 37.4241,
-      lng: -122.1430
-    },
-    rating: 4.7,
-    reviewsCount: 52
+    reviewsCount: 34,
   },
   {
     make: "BMW",
@@ -107,7 +64,6 @@ const initialCars = [
     status: "Available",
     images: [
       "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80"
     ],
     description: "An iconic high-performance executive sedan blending brutal V8 power with refined luxury and intelligent M xDrive technology.",
     specs: {
@@ -116,24 +72,16 @@ const initialCars = [
       acceleration: "3.1s 0-60mph",
       topSpeed: "190 mph",
       seating: 5,
-      drivetrain: "AWD"
+      drivetrain: "AWD",
     },
     features: [
       "M xDrive with 2WD Mode",
-      "Bowerman & Wilkins Surround Sound",
+      "Bowers & Wilkins Surround Sound",
       "Merino Leather Interior",
-      "Carbon Fiber Roof",
-      "Executive Package"
     ],
-    dealership: {
-      name: "Apex Downtown Motors",
-      address: "1200 S Figueroa St, Los Angeles, CA 90015",
-      phone: "+1 (213) 555-4650",
-      lat: 34.0430,
-      lng: -118.2673
-    },
+    dealership: RAJKOT_DEALERSHIP,
     rating: 4.8,
-    reviewsCount: 29
+    reviewsCount: 29,
   },
   {
     make: "Audi",
@@ -149,33 +97,24 @@ const initialCars = [
     status: "Available",
     images: [
       "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80"
     ],
     description: "Scintillating electric performance grand tourer with 800V fast charging architecture and iconic RS dynamic tuning.",
     specs: {
-      engine: "Dual Permanent Magnet Electric Motors",
+      engine: "Dual Electric Motors",
       horsepower: 637,
       acceleration: "3.1s 0-60mph",
       topSpeed: "155 mph",
       seating: 4,
-      drivetrain: "AWD"
+      drivetrain: "AWD",
     },
     features: [
       "All-wheel Steering",
       "Bang & Olufsen 3D Sound",
-      "Matrix-design LED Headlights with Laser Light",
-      "Carbon Fiber Roof Panel",
-      "Adaptive Air Suspension"
+      "Matrix LED Laser Headlights",
     ],
-    dealership: {
-      name: "Apex Newport Beach Motors",
-      address: "1000 Coast Hwy, Newport Beach, CA 92660",
-      phone: "+1 (949) 555-7740",
-      lat: 33.6189,
-      lng: -117.9298
-    },
+    dealership: RAJKOT_DEALERSHIP,
     rating: 4.9,
-    reviewsCount: 19
+    reviewsCount: 19,
   },
   {
     make: "Mercedes-Benz",
@@ -185,13 +124,12 @@ const initialCars = [
     mileage: 2100,
     fuelType: "Petrol",
     transmission: "Automatic",
-    color: "G Manufaktur Obsidian Black",
+    color: "Obsidian Black",
     category: "SUV",
-    quantity: 1,
+    quantity: 2,
     status: "Available",
     images: [
       "https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80"
     ],
     description: "The timeless icon of rugged luxury and raw power. Handmade AMG biturbo V8 paired with unmatched off-road capability.",
     specs: {
@@ -200,67 +138,84 @@ const initialCars = [
       acceleration: "4.5s 0-60mph",
       topSpeed: "149 mph",
       seating: 5,
-      drivetrain: "AWD"
+      drivetrain: "AWD",
     },
     features: [
       "AMG Ride Control Suspension",
-      "Burmester Surround Sound",
+      "Burmester 3D Surround Sound",
       "Exclusive Nappa Leather",
-      "Triple Lock Differential",
-      "Night Package Magno"
     ],
-    dealership: {
-      name: "Apex Beverly Hills Luxury",
-      address: "9500 Wilshire Blvd, Beverly Hills, CA 90212",
-      phone: "+1 (310) 555-9110",
-      lat: 34.0671,
-      lng: -118.4005
-    },
+    dealership: RAJKOT_DEALERSHIP,
     rating: 5.0,
-    reviewsCount: 41
+    reviewsCount: 41,
   },
   {
-    make: "Range Rover",
-    model: "SV Autobiography",
+    make: "Tata",
+    model: "Harrier DARK Edition",
     year: 2024,
-    price: 209000,
+    price: 32000,
     mileage: 1500,
-    fuelType: "Hybrid",
+    fuelType: "Diesel",
     transmission: "Automatic",
-    color: "Charente Grey",
+    color: "Oberon Black",
     category: "SUV",
-    quantity: 2,
+    quantity: 4,
+    status: "Available",
+    images: [
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80",
+    ],
+    description: "Flagship Indian luxury SUV built on OMEGA ARC platform with Kryotec 2.0L Diesel engine and ADAS safety suite.",
+    specs: {
+      engine: "2.0L Kryotec Turbo Diesel",
+      horsepower: 170,
+      acceleration: "9.5s 0-60mph",
+      topSpeed: "115 mph",
+      seating: 5,
+      drivetrain: "FWD",
+    },
+    features: [
+      "Panoramic Sunroof",
+      "JBL 10-Speaker Audio",
+      "Level 2 ADAS",
+      "360 3D HD Camera",
+    ],
+    dealership: RAJKOT_DEALERSHIP,
+    rating: 4.7,
+    reviewsCount: 22,
+  },
+  {
+    make: "Mahindra",
+    model: "XUV700 AX7 Luxury",
+    year: 2024,
+    price: 35000,
+    mileage: 2300,
+    fuelType: "Petrol",
+    transmission: "Automatic",
+    color: "Midnight Black",
+    category: "SUV",
+    quantity: 3,
     status: "Available",
     images: [
       "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=1200&q=80"
     ],
-    description: "Peerless luxury SUV flagship featuring executive rear seating with massagers, ceramic controls, and whisper-quiet cabin acoustics.",
+    description: "Modern luxury SUV featuring mStallion Turbo Gasoline engine, dual HD superscreen displays, and AWD option.",
     specs: {
-      engine: "4.4L Twin-Turbocharged V8 PHEV",
-      horsepower: 523,
-      acceleration: "4.4s 0-60mph",
-      topSpeed: "162 mph",
-      seating: 4,
-      drivetrain: "AWD"
+      engine: "2.0L mStallion Turbo Gasoline",
+      horsepower: 200,
+      acceleration: "8.8s 0-60mph",
+      topSpeed: "124 mph",
+      seating: 7,
+      drivetrain: "AWD",
     },
     features: [
-      "Executive Class Comfort Rear Seats",
-      "Meridian Signature Sound System",
-      "Digital LED Headlights with Image Projection",
-      "Active Noise Cancellation",
-      "Refrigerated Rear Compartment"
+      "Sony 3D Immersive Audio",
+      "Skyroof Panoramic Glass",
+      "Ventilated Front Seats",
     ],
-    dealership: {
-      name: "Apex Newport Beach Motors",
-      address: "1000 Coast Hwy, Newport Beach, CA 92660",
-      phone: "+1 (949) 555-7740",
-      lat: 33.6189,
-      lng: -117.9298
-    },
-    rating: 4.9,
-    reviewsCount: 22
-  }
+    dealership: RAJKOT_DEALERSHIP,
+    rating: 4.8,
+    reviewsCount: 38,
+  },
 ];
 
 const seedDatabase = async () => {
@@ -269,14 +224,15 @@ const seedDatabase = async () => {
     console.log("🌱 Connecting to MongoDB for seeding...");
     await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
 
+    if (process.argv.includes("--force")) {
+      await Car.deleteMany({});
+      console.log("🧹 Cleared existing cars.");
+    }
+
     const count = await Car.countDocuments();
-    if (count === 0 || process.argv.includes("--force")) {
-      if (process.argv.includes("--force")) {
-        await Car.deleteMany({});
-        console.log("🧹 Cleared existing cars.");
-      }
+    if (count === 0) {
       await Car.insertMany(initialCars);
-      console.log(`✅ Successfully seeded ${initialCars.length} luxury vehicles!`);
+      console.log(`✅ Successfully seeded ${initialCars.length} vehicles with Rajkot Dealership defaults!`);
     } else {
       console.log(`ℹ️ Database already has ${count} vehicles. Use --force to re-seed.`);
     }
@@ -291,4 +247,4 @@ if (require.main === module) {
   seedDatabase();
 }
 
-module.exports = { seedDatabase, initialCars };
+module.exports = { seedDatabase, initialCars, RAJKOT_DEALERSHIP };

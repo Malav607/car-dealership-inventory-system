@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const Car = require("../models/Car");
+const { getDeliveryDetailsForCity } = require("../utils/distanceCalculator");
 
 // Create a new vehicle order (Purchase)
 const createOrder = async (req, res) => {
@@ -38,6 +39,13 @@ const createOrder = async (req, res) => {
 
     const carImage = (car.images && car.images.length > 0) ? car.images[0] : "";
 
+    // Compute Rajkot delivery route distance & ETA
+    const deliveryMeta = getDeliveryDetailsForCity(shippingAddress.city);
+    const finalCoords = deliveryCoords || deliveryMeta.coords;
+    const distanceKm = deliveryMeta.distanceKm;
+    const estimatedDeliveryDays = deliveryMeta.deliveryDays;
+    const estimatedDeliveryDate = new Date(Date.now() + estimatedDeliveryDays * 24 * 60 * 60 * 1000);
+
     const order = await Order.create({
       user: userId,
       car: car._id,
@@ -49,11 +57,17 @@ const createOrder = async (req, res) => {
         image: carImage,
       },
       totalAmount: car.price,
-      shippingAddress,
-      deliveryCoords: deliveryCoords || { lat: 34.0522, lng: -118.2437 },
-      paymentMethod: paymentMethod || "Credit Card (Simulated)",
+      shippingAddress: {
+        ...shippingAddress,
+        country: shippingAddress.country || "India",
+      },
+      deliveryCoords: finalCoords,
+      distanceKm,
+      estimatedDeliveryDays,
+      estimatedDeliveryDate,
+      paymentMethod: paymentMethod || "Razorpay / Credit Card (Simulated)",
       paymentStatus: "Paid",
-      status: "Processing",
+      status: "Order Confirmed",
     });
 
     res.status(201).json({
@@ -147,7 +161,16 @@ const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ["Processing", "Confirmed", "Shipped", "Delivered", "Cancelled"];
+    const validStatuses = [
+      "Order Confirmed",
+      "Preparing Vehicle",
+      "In Transit",
+      "Delivered",
+      "Cancelled",
+      "Processing",
+      "Confirmed",
+      "Shipped",
+    ];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,

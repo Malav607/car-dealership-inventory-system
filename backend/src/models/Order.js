@@ -29,20 +29,28 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true, trim: true },
       state: { type: String, required: true, trim: true },
       zipCode: { type: String, required: true, trim: true },
-      country: { type: String, default: "United States", trim: true },
+      country: { type: String, default: "India", trim: true },
     },
     deliveryCoords: {
-      lat: { type: Number, default: 34.0522 },
-      lng: { type: Number, default: -118.2437 },
+      lat: { type: Number, default: 23.0225 },
+      lng: { type: Number, default: 72.5714 },
+    },
+    distanceKm: {
+      type: Number,
+      default: 215,
+    },
+    estimatedDeliveryDays: {
+      type: Number,
+      default: 2,
     },
     status: {
       type: String,
-      enum: ["Processing", "Confirmed", "Shipped", "Delivered", "Cancelled"],
-      default: "Processing",
+      enum: ["Order Confirmed", "Preparing Vehicle", "In Transit", "Delivered", "Cancelled", "Processing", "Confirmed", "Shipped"],
+      default: "Order Confirmed",
     },
     paymentMethod: {
       type: String,
-      default: "Credit Card (Simulated)",
+      default: "Razorpay / Credit Card (Simulated)",
     },
     paymentStatus: {
       type: String,
@@ -51,7 +59,7 @@ const orderSchema = new mongoose.Schema(
     },
     estimatedDeliveryDate: {
       type: Date,
-      default: () => new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // +5 days
+      default: () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // +2 days
     },
   },
   {
