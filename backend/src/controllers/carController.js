@@ -32,10 +32,6 @@ const getCars = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCar,
-  getCars,
-};
 
 const searchCars = async (req, res) => {
   try {
@@ -75,11 +71,6 @@ const searchCars = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCar,
-  getCars,
-  searchCars,
-};
 
 const updateCar = async (req, res) => {
   try {
@@ -109,12 +100,6 @@ const updateCar = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCar,
-  getCars,
-  searchCars,
-  updateCar,
-};
 
 const deleteCar = async (req, res) => {
   try {
@@ -141,13 +126,6 @@ const deleteCar = async (req, res) => {
   }
 };
 
-module.exports = {
-  createCar,
-  getCars,
-  searchCars,
-  updateCar,
-  deleteCar,
-};
 
 const purchaseCar = async (req, res) => {
   try {

@@ -112,7 +112,7 @@ const Register = () => {
                   onChange={(e) => setRole(e.target.value)}
                   className="block w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition-all duration-300 ease-in-out text-sm appearance-none cursor-pointer"
                 >
-                  <option value="User" className="bg-slate-950">Standard User (View & Purchase)</option>
+                  <option value="User" className="bg-slate-950">Customer / User (View & Purchase)</option>
                   <option value="Admin" className="bg-slate-950">Administrator (Full CRUD & Restock)</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-500">

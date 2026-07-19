@@ -15,7 +15,7 @@ const register = async (req, res) => {
     }
 
     // Create user
-    const user = await User.create({ email, password, role });
+    const user = await User.create({ email, password, role: role || "User" });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -35,6 +35,10 @@ const register = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.error("===== REGISTER ERROR =====");
+    console.error(error);
+    console.error(error.stack);
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -42,9 +46,6 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = {
-  register,
-};
 
 const login = async (req, res) => {
   try {
