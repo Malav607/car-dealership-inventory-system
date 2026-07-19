@@ -201,7 +201,11 @@ const AdminDashboard = () => {
         },
         body: JSON.stringify({ quantity: Number(restockQty) }),
       });
-      if (!res.ok) throw new Error("Restock failed");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Restock failed");
+      }
       toast.success(`Restocked ${restockCar.make} ${restockCar.model}`);
       setRestockCar(null);
       setRestockQty("");
