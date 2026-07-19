@@ -57,6 +57,53 @@ const carSchema = new mongoose.Schema(
       enum: ["Available", "Sold"],
       default: "Available",
     },
+    images: {
+      type: [String],
+      default: [
+        "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1200&q=80"
+      ],
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: "High-performance luxury vehicle featuring premium crafting, cutting-edge technology, and exceptional handling.",
+    },
+    specs: {
+      engine: { type: String, default: "3.0L Turbocharged V6" },
+      horsepower: { type: Number, default: 375 },
+      acceleration: { type: String, default: "4.2s 0-60mph" },
+      topSpeed: { type: String, default: "175 mph" },
+      seating: { type: Number, default: 5 },
+      drivetrain: { type: String, default: "AWD" },
+    },
+    features: {
+      type: [String],
+      default: [
+        "Adaptive Cruise Control",
+        "Panoram Sunroof",
+        "Ventilated Leather Seats",
+        "Burmester 3D Surround Sound",
+        "Lane Keep Assist",
+        "Heads-Up Display",
+      ],
+    },
+    dealership: {
+      name: { type: String, default: "Apex Automotive Flagship" },
+      address: { type: String, default: "100 Grand Boulevard, Beverly Hills, CA 90210" },
+      phone: { type: String, default: "+1 (800) 555-APEX" },
+      lat: { type: Number, default: 34.0736 },
+      lng: { type: Number, default: -118.4004 },
+    },
+    rating: {
+      type: Number,
+      default: 4.8,
+      min: 0,
+      max: 5,
+    },
+    reviewsCount: {
+      type: Number,
+      default: 18,
+    },
   },
   {
     timestamps: true,
