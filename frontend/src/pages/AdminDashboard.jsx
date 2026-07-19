@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
+import BrandImagePickerModal from "../components/BrandImagePickerModal";
 import {
   ShieldCheck,
   DollarSign,
@@ -17,6 +18,7 @@ import {
   CheckCircle2,
   PackageCheck,
   BarChart3,
+  Image as ImageIcon,
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { motion } from "framer-motion";
@@ -34,6 +36,7 @@ const AdminDashboard = () => {
 
   // Vehicle Modal (Add/Edit)
   const [isCarModalOpen, setIsCarModalOpen] = useState(false);
+  const [isImagePickerOpen, setIsImagePickerOpen] = useState(false);
   const [editingCar, setEditingCar] = useState(null);
   const [carFormData, setCarFormData] = useState({
     make: "",
@@ -723,13 +726,24 @@ const AdminDashboard = () => {
             />
           </div>
 
-          <input
-            type="url"
-            placeholder="Image URL (Unsplash or direct link)"
-            value={carFormData.imageUrl}
-            onChange={(e) => setCarFormData({ ...carFormData, imageUrl: e.target.value })}
-            className="glass-input w-full px-4 py-3 rounded-xl text-sm"
-          />
+          <div className="flex gap-2 items-center">
+            <input
+              type="text"
+              placeholder="Image URL (Unsplash or local path)"
+              value={carFormData.imageUrl}
+              onChange={(e) => setCarFormData({ ...carFormData, imageUrl: e.target.value })}
+              className="glass-input flex-1 px-4 py-3 rounded-xl text-sm"
+            />
+            <button
+              type="button"
+              onClick={() => setIsImagePickerOpen(true)}
+              className="px-3.5 py-3 bg-slate-800 hover:bg-slate-700 text-cyan-accent font-semibold text-xs rounded-xl border border-slate-700 flex items-center gap-1.5 shrink-0"
+              title="Pick preset image from 15 brand asset collection"
+            >
+              <ImageIcon className="w-4 h-4" />
+              <span>Asset Library</span>
+            </button>
+          </div>
 
           <div className="flex justify-end gap-3 pt-4">
             <button type="button" onClick={() => setIsCarModalOpen(false)} className="px-5 py-2.5 text-xs text-slate-400">Cancel</button>
@@ -739,6 +753,14 @@ const AdminDashboard = () => {
           </div>
         </form>
       </Modal>
+
+      {/* BRAND IMAGE PICKER MODAL */}
+      <BrandImagePickerModal
+        isOpen={isImagePickerOpen}
+        onClose={() => setIsImagePickerOpen(false)}
+        selectedBrand={carFormData.make}
+        onSelectImage={(url) => setCarFormData({ ...carFormData, imageUrl: url })}
+      />
 
       {/* RESTOCK MODAL */}
       <Modal isOpen={!!restockCar} onClose={() => setRestockCar(null)} title={`Restock Vehicle: ${restockCar?.make} ${restockCar?.model}`}>
