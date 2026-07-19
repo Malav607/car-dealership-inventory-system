@@ -48,5 +48,38 @@ Transform the Car Dealership Inventory System into a production-grade full-stack
 
 ---
 
+## Upgraded Production Features (Phase 1 to 6 Iterations)
+
+### Upgrade Prompt 1: Rajkot Dealership Location & Delivery Tracking Engine
+- **Branch**: `feature/rajkot-dealership-delivery`
+- **Request**: Set permanent dealership base in Rajkot, Gujarat (`22.3039, 70.8022`), add Haversine geodesic distance calculator in km and delivery days ETA, and update Leaflet delivery route tracking map & status stepper (`Order Confirmed` → `Preparing Vehicle` → `In Transit` → `Delivered`).
+- **Commit**: `feat(delivery): set permanent Rajkot dealership location, Haversine distance calculator, and delivery route tracking`
+
+### Upgrade Prompt 2: Customer Inquiry & Test Drive Booking System
+- **Branch**: `feature/inquiry-system`
+- **Request**: Build `Inquiry` model, APIs (`POST /api/inquiries`, `GET my-inquiries`, `GET admin all`, `PATCH status`), Jest test suite `tests/inquiry.test.js`, `InquiryModal`, `/contact` page with Rajkot showroom visit booking, and Admin Inquiry Manager tab.
+- **Commit**: `feat(inquiry): add customer inquiry model, test drive booking, contact page, and admin inquiry manager`
+
+### Upgrade Prompt 3: 15-Brand Vehicle Image Asset Library
+- **Branch**: `feature/car-image-library`
+- **Request**: Create `carImageCatalog.js` covering 15 brands (Toyota, BMW, Audi, Mercedes, Hyundai, Kia, Tata, Mahindra, Honda, Ford, Porsche, Ferrari, Lamborghini, MG, Volvo), and build `BrandImagePickerModal` integrated into Admin Vehicle form.
+- **Commit**: `feat(assets): add 15-brand vehicle image asset catalog and brand image picker in admin form`
+
+### Upgrade Prompt 4: Purchase Success Celebration & UX Enhancements
+- **Branch**: `feature/ux-enhancements`
+- **Request**: Build Purchase Success Celebration Page (`/order-success/:orderId`) with confetti animation, reusable `Breadcrumbs`, interactive Profile Dropdown in `Navbar.jsx`, Recently Viewed Vehicles (`localStorage`), and "Similar Vehicles You Might Like" recommendations.
+- **Commit**: `feat(ux): add purchase success celebration page, breadcrumbs, profile dropdown, and recommended vehicles`
+
+### Upgrade Prompt 5: Framer Motion Animations & Premium UI Design Polish
+- **Branch**: `feature/premium-ui-animations`
+- **Request**: Add page route transitions with `AnimatePresence` and `motion.div`, card hover scale & glowing border micro-animations, and design polish.
+- **Commit**: `feat(animations): add page transition animations and UI polish`
+
+### Upgrade Prompt 6: Final Verification & Release
+- **Branch**: `develop` -> `main`
+- **Request**: Run full Jest test suite (39/39 passing tests), verify Vite production build, update documentation (`README.md`, `PROMPTS.md`), merge into `main`, and tag release `v2.0.0`.
+
+---
+
 ## Co-Author Signature
 Co-authored-by: Antigravity <AI@users.noreply.github.com>

@@ -1,6 +1,6 @@
 # Apex Motors — Production-Grade Luxury Car Marketplace
 
-A production-quality full-stack Car Marketplace and Dealership Inventory application engineered with Staff-level software design patterns, dark automotive luxury UI/UX, JWT security, multi-role authorization, order fulfillment tracking with Leaflet interactive maps, and automated Jest test suites.
+A production-quality full-stack Car Marketplace and Dealership Inventory application engineered with Staff-level software design patterns, dark obsidian automotive luxury UI/UX, JWT security, multi-role authorization, Rajkot flagship delivery tracking engine with Leaflet interactive route maps, Haversine geodesic distance calculation, customer inquiry & test drive booking system, 15-brand vehicle image asset catalog, and 39 automated Jest unit tests.
 
 ---
 
@@ -16,21 +16,38 @@ A production-quality full-stack Car Marketplace and Dealership Inventory applica
   * High-res multi-photo gallery with thumbnail selector and full-screen Lightbox zoom.
   * Technical Specs grid (Engine, Horsepower, 0-60mph acceleration, Top Speed, Drivetrain).
   * Equipment & options checklist with status badges.
-  * Interactive Leaflet Dealership location map pin.
+  * Interactive Leaflet Dealership location map pin set to Rajkot Flagship Showroom.
+  * **Book Test Drive / Showroom Inquiry Modal**.
+  * **"Similar Vehicles You Might Like"** AI-inspired recommendations.
 
-### 💳 Purchase Engine & Order Tracking
-* **Purchase Workflow**: Multi-step checkout modal with shipping address validation and live inventory stock decrement.
-* **My Purchases Dashboard (`/my-purchases`)**: User transaction history, active order status badges, and direct links to tracking.
-* **Order Tracking & Route (`/orders/:id`)**:
-  * Status Timeline Stepper (`Processing` → `Confirmed` → `Shipped` → `Delivered`).
-  * Interactive Leaflet Delivery Map plotting polyline route from Flagship Dealership to Customer Destination.
+### 📍 Rajkot Dealership & Live Delivery Tracking Engine
+* **Permanent Dealership Base**: Flagship Showroom situated on 150 Feet Ring Road, Rajkot, Gujarat (`22.3039° N, 70.8022° E`).
+* **Geodesic Distance & ETA Telemetry**: Automatically computes Haversine distance in kilometers and calculates estimated delivery days (1–4 days) based on destination coordinates.
+* **Delivery Order Progress Stepper**: Modern order lifecycle tracker (`Order Confirmed` → `Preparing Vehicle` → `In Transit` → `Delivered`).
+* **Interactive Polyline Delivery Route Map**: Leaflet map plotting polyline route between Rajkot Showroom and customer city with live GPS status badges.
+
+### 📩 Customer Inquiry & Test Drive Booking System
+* **Inquiry Modal**: Book test drives, request manager callbacks, or inquire about vehicle pricing directly on vehicle detail pages.
+* **Rajkot Concierge Page (`/contact`)**: Dedicated contact page to schedule private showroom visits, submit general questions, and view interactive Rajkot location map.
+* **Admin Inquiry Manager**: Executive tab in Admin Dashboard to review, track, and update customer inquiry statuses (`Pending` → `In Progress` → `Resolved`).
+
+### 📸 15-Brand Vehicle Image Asset Library
+* **Curated Asset Collection**: High-resolution imagery presets covering 15 top automotive brands (*Toyota, BMW, Audi, Mercedes, Hyundai, Kia, Tata, Mahindra, Honda, Ford, Porsche, Ferrari, Lamborghini, MG, Volvo*).
+* **Brand Image Picker Modal**: Interactive modal integrated into Admin Vehicle form allowing 1-click selection of preset brand imagery or custom URL inputs.
+
+### 🎨 Celebration & UX Polish
+* **Order Success Page (`/order-success/:orderId`)**: Celebration page with confetti animation, order summary, and instant route tracking link.
+* **Breadcrumb Navigation**: Dynamic breadcrumbs across marketplace pages.
+* **Profile Dropdown**: User profile avatar pill with email, role badge, quick links to purchases, concierge, and sign-out.
+* **Recently Viewed Vehicles**: Local storage persistence tracking customer browsing history.
 
 ### 📊 Senior Executive Admin Center (`/admin`)
 * **KPI Telemetry**: Real-time Gross Sales ($), Order Count, Fleet Inventory Valuation, and Low Stock Alert counters.
 * **Recharts Analytics**: Dynamic bar charts visualizing inventory valuation by category.
 * **Low Stock Alerts & Restock Engine**: Instant low stock notification panel with direct restock trigger.
-* **Fleet Management**: Searchable inventory table with full CRUD (Add/Edit vehicle modal, image URL manager, restock, and delete).
-* **Order Fulfillment Center**: Global order processing list with status override control (Processing, Confirmed, Shipped, Delivered, Cancelled).
+* **Fleet Management**: Searchable inventory table with full CRUD (Add/Edit vehicle modal, image URL manager, brand asset picker, restock, and delete).
+* **Order Fulfillment Center**: Global order processing list with status override control (`Order Confirmed`, `Preparing Vehicle`, `In Transit`, `Delivered`, `Cancelled`).
+* **Inquiry Management Tab**: Global inquiry list with status updater.
 
 ---
 
@@ -40,7 +57,7 @@ A production-quality full-stack Car Marketplace and Dealership Inventory applica
 * **Runtime**: Node.js & Express.js
 * **Database**: MongoDB (Mongoose ODM with local fallback)
 * **Authentication**: JWT (JSON Web Tokens) with bcrypt password hashing
-* **Testing Suite**: Jest & Supertest (35 passing unit & integration tests)
+* **Testing Suite**: Jest & Supertest (39 passing unit & integration tests)
 
 ### Frontend
 * **Build Tool**: Vite (React 19)
@@ -58,97 +75,26 @@ A production-quality full-stack Car Marketplace and Dealership Inventory applica
 * Node.js (v18+)
 * MongoDB connection string (or local MongoDB on `mongodb://127.0.0.1:27017/car-dealership`)
 
----
+### 1. Setup Backend
+```bash
+cd backend
+npm install
+npm run seed     # Seeds vehicles with Rajkot Dealership defaults & admin credentials
+npm test         # Executes 39 Jest unit & integration tests
+npm start        # Launches server on http://localhost:5000
+```
 
-### Backend Setup
-
-1. **Navigate to backend**:
-   ```bash
-   cd backend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**:
-   Create a `.env` file inside `backend`:
-   ```env
-   PORT=5000
-   MONGODB_URI=mongodb://127.0.0.1:27017/car-dealership
-   JWT_SECRET=apex_motors_super_secret_jwt_key
-   ```
-
-4. **Seed Database with Vehicles**:
-   ```bash
-   node src/utils/seedData.js --force
-   ```
-
-5. **Run Automated Tests**:
-   ```bash
-   npm test
-   ```
-
-6. **Start Backend Server**:
-   ```bash
-   npm start
-   ```
-
----
-
-### Frontend Setup
-
-1. **Navigate to frontend**:
-   ```bash
-   cd ../frontend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Access application at `http://localhost:5173`.
-
-4. **Production Build**:
-   ```bash
-   npm run build
-   ```
-
----
-
-## 📁 Repository Structure
-
-```text
-├── backend/
-│   ├── src/
-│   │   ├── config/       # DB Connection & Fallbacks
-│   │   ├── controllers/  # authController, carController, orderController
-│   │   ├── middleware/   # protect & authorize RBAC middlewares
-│   │   ├── models/       # User, Car, Order Mongoose Schemas
-│   │   ├── routes/       # authRoutes, carRoutes, orderRoutes
-│   │   └── utils/        # seedData.js
-│   ├── tests/            # auth.test.js, car.test.js, order.test.js, middleware.test.js
-│   └── server.js
-└── frontend/
-    ├── src/
-    │   ├── components/   # Navbar, Footer, Modal, SkeletonCard, ProtectedRoute
-    │   ├── context/      # AuthContext
-    │   ├── pages/        # Login, Register, Marketplace, VehicleDetails, MyPurchases, OrderDetails, AdminDashboard
-    │   ├── index.css     # Tailwind imports, glassmorphism, Leaflet dark styles
-    │   └── App.jsx       # React Router 7 setup
-    └── tailwind.config.js
+### 2. Setup Frontend
+```bash
+cd frontend
+npm install
+npm run dev      # Launches dev server on http://localhost:5173
+npm run build    # Builds production bundle
 ```
 
 ---
 
-## 👥 AI Co-Authorship & Engineering Workflow
+## 🔑 Demo Credentials
 
-* **Conventional Commits**: Every single feature branch (`feature/...`) follows standard Conventional Commit format (`feat`, `refactor`, `style`, `fix`).
-* **Co-author Attribution**: Substantial AI contributions include the `Co-authored-by: Antigravity <AI@users.noreply.github.com>` trailer.
-* **Test-Driven Rigor**: Backend routes maintain 100% pass rate across Jest test suites before merging into `develop`.
+* **Admin User**: `admin@apexmotors.com` / `AdminPass123!`
+* **Standard User**: `customer@apexmotors.com` / `CustomerPass123!`
