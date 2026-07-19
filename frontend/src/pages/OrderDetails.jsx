@@ -162,25 +162,29 @@ const OrderDetails = () => {
               <p className="text-xs text-slate-400 mt-0.5">Dispatched from Rajkot Showroom</p>
             </div>
 
-            {(distanceKm !== null || etaDate !== null) && (
-              <div className="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800 text-xs">
-                {distanceKm !== null && (
-                  <div>
-                    <span className="text-slate-500 text-[10px] uppercase font-bold block">Distance</span>
-                    <span className="font-bold text-cyan-accent">{distanceKm} km</span>
-                  </div>
-                )}
-                {distanceKm !== null && etaDate !== null && <div className="h-6 w-px bg-slate-800" />}
-                {etaDate !== null && (
-                  <div>
-                    <span className="text-slate-500 text-[10px] uppercase font-bold block">Estimated Arrival</span>
-                    <span className="font-bold text-emerald-400">
-                      {etaDate} {estimatedDeliveryDays ? `(${estimatedDeliveryDays} Day${estimatedDeliveryDays > 1 ? "s" : ""})` : ""}
-                    </span>
-                  </div>
+            <div className="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-2xl border border-slate-800 text-xs">
+              {distanceKm !== null && (
+                <div>
+                  <span className="text-slate-500 text-[10px] uppercase font-bold block">Distance</span>
+                  <span className="font-bold text-cyan-accent">{distanceKm} km</span>
+                </div>
+              )}
+              {distanceKm !== null && <div className="h-6 w-px bg-slate-800" />}
+              <div>
+                <span className="text-slate-500 text-[10px] uppercase font-bold block">Delivery Status</span>
+                {order.status === "Delivered" ? (
+                  <span className="font-bold text-emerald-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    Vehicle Delivered
+                  </span>
+                ) : (
+                  <span className="font-bold text-emerald-400">
+                    {etaDate ? `${etaDate} ` : ""}
+                    {estimatedDeliveryDays ? `(${estimatedDeliveryDays} Day${estimatedDeliveryDays > 1 ? "s" : ""})` : "In Progress"}
+                  </span>
                 )}
               </div>
-            )}
+            </div>
           </div>
 
           {/* Stepper Grid */}
@@ -282,7 +286,9 @@ const OrderDetails = () => {
               <div className="text-xs text-slate-300 space-y-1">
                 <p className="font-bold text-white">{order.shippingAddress?.street}</p>
                 <p>{order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}</p>
-                {order.shippingAddress?.country && <p>{order.shippingAddress.country}</p>}
+                {order.shippingAddress?.country && order.shippingAddress.country !== "United States" && (
+                  <p>{order.shippingAddress.country}</p>
+                )}
               </div>
             </div>
 
