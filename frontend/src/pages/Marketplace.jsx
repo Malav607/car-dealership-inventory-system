@@ -41,12 +41,19 @@ const Marketplace = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("recentlyViewedCars") || "[]");
+    setRecentlyViewed(stored);
+  }, []);
+
   // Quick Purchase Modal State
   const [quickBuyCar, setQuickBuyCar] = useState(null);
   const [shippingStreet, setShippingStreet] = useState("");
-  const [shippingCity, setShippingCity] = useState("");
-  const [shippingState, setShippingState] = useState("");
-  const [shippingZip, setShippingZip] = useState("");
+  const [shippingCity, setShippingCity] = useState("Ahmedabad");
+  const [shippingState, setShippingState] = useState("Gujarat");
+  const [shippingZip, setShippingZip] = useState("380001");
   const [purchasing, setPurchasing] = useState(false);
 
   const fetchCars = async () => {
@@ -137,7 +144,7 @@ const Marketplace = () => {
       toast.success("Congratulations! Your vehicle order is confirmed.");
       setQuickBuyCar(null);
       fetchCars();
-      navigate(`/orders/${data.data._id}`);
+      navigate(`/order-success/${data.data._id}`);
     } catch (err) {
       toast.error(err.message || "Order placement failed");
     } finally {

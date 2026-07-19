@@ -72,32 +72,56 @@ const Navbar = () => {
 
         {/* User Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
-            <div className="w-9 h-9 rounded-full bg-slate-900 border border-slate-700/60 flex items-center justify-center text-cyan-accent">
-              <UserIcon className="w-4 h-4" />
+          <div className="relative group">
+            <div className="flex items-center gap-3 pl-4 border-l border-slate-800 cursor-pointer py-1">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-accent/20 to-blue-600/20 border border-cyan-accent/40 flex items-center justify-center text-cyan-accent shadow-glow">
+                <UserIcon className="w-4.5 h-4.5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-slate-200 line-clamp-1 max-w-[140px]">
+                  {user?.email}
+                </span>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-wider ${
+                    user?.role === "Admin" ? "text-purple-400" : "text-cyan-accent"
+                  }`}
+                >
+                  {user?.role === "Admin" ? "Executive Admin" : "Rajkot Client"}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-200 line-clamp-1 max-w-[140px]">
-                {user?.email}
-              </span>
-              <span
-                className={`text-[10px] font-bold uppercase tracking-wider ${
-                  user?.role === "Admin" ? "text-purple-400" : "text-cyan-accent"
-                }`}
-              >
-                {user?.role === "Admin" ? "Executive Admin" : "Customer"}
-              </span>
+
+            {/* Hover Profile Dropdown */}
+            <div className="absolute right-0 top-full pt-2 w-56 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-50">
+              <div className="glass-panel p-3 rounded-2xl border border-slate-800 space-y-2 shadow-2xl bg-obsidian-950/95 backdrop-blur-2xl">
+                <div className="p-2 border-b border-slate-800">
+                  <p className="text-xs font-bold text-white">Logged in as</p>
+                  <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
+                </div>
+                <Link to="/my-purchases" className="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-accent flex items-center gap-2">
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  My Vehicle Purchases
+                </Link>
+                <Link to="/contact" className="w-full text-left px-3 py-2 rounded-xl text-xs text-slate-300 hover:bg-slate-800 hover:text-cyan-accent flex items-center gap-2">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Rajkot Showroom Concierge
+                </Link>
+                {user?.role === "Admin" && (
+                  <Link to="/admin" className="w-full text-left px-3 py-2 rounded-xl text-xs text-purple-400 hover:bg-purple-900/20 flex items-center gap-2 font-semibold">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    Admin Control Center
+                  </Link>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-3 py-2 rounded-xl text-xs text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 font-semibold border-t border-slate-800/80 pt-2"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
+                </button>
+              </div>
             </div>
           </div>
-
-          <button
-            onClick={handleLogout}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all duration-300 flex items-center gap-1.5"
-            title="Sign out of account"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            Sign Out
-          </button>
         </div>
 
         {/* Mobile Menu Toggle */}

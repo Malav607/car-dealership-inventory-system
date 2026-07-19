@@ -32,6 +32,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
+import Breadcrumbs from "../components/Breadcrumbs";
+
 const API_BASE_URL = "http://localhost:5000/api";
 
 const VehicleDetails = () => {
@@ -39,6 +41,7 @@ const VehicleDetails = () => {
   const navigate = useNavigate();
 
   const [car, setCar] = useState(null);
+  const [similarCars, setSimilarCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -47,9 +50,9 @@ const VehicleDetails = () => {
   // Purchase Modal State
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [shippingStreet, setShippingStreet] = useState("");
-  const [shippingCity, setShippingCity] = useState("");
-  const [shippingState, setShippingState] = useState("");
-  const [shippingZip, setShippingZip] = useState("");
+  const [shippingCity, setShippingCity] = useState("Ahmedabad");
+  const [shippingState, setShippingState] = useState("Gujarat");
+  const [shippingZip, setShippingZip] = useState("380001");
   const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
@@ -65,6 +68,32 @@ const VehicleDetails = () => {
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || "Failed to load vehicle");
         setCar(data.data);
+
+        // Save to Recently Viewed in localStorage
+        if (data.data) {
+          const stored = JSON.parse(localStorage.getItem("recentlyViewedCars") || "[]");
+          const filtered = stored.filter((c) => c._id !== data.data._id);
+          const updated = [
+            {
+              _id: data.data._id,
+              make: data.data.make,
+              model: data.data.model,
+              price: data.data.price,
+              image: data.data.images?.[0] || "",
+            },
+            ...filtered,
+          ].slice(0, 5);
+          localStorage.setItem("recentlyViewedCars", JSON.stringify(updated));
+
+          // Fetch similar cars
+          const simRes = await fetch(`${API_BASE_URL}/cars?category=${data.data.category}&limit=3`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const simData = await simRes.json();
+          if (simRes.ok) {
+            setSimilarCars((simData.data || []).filter((c) => c._id !== data.data._id));
+          }
+        }
       } catch (err) {
         toast.error(err.message || "Could not load vehicle details");
       } finally {
@@ -106,7 +135,7 @@ const VehicleDetails = () => {
 
       toast.success("Order confirmed successfully!");
       setIsPurchaseModalOpen(false);
-      navigate(`/orders/${data.data._id}`);
+      navigate(`/order-success/${data.data._id}`);
     } catch (err) {
       toast.error(err.message || "Failed to place order");
     } finally {
@@ -176,12 +205,8 @@ const VehicleDetails = () => {
       <Toaster position="top-right" toastOptions={{ style: { background: "#0F172A", color: "#F8FAFC", border: "1px solid rgba(0,240,255,0.3)" } }} />
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-10">
-        {/* Back navigation */}
-        <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-cyan-accent transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Marketplace</span>
-        </Link>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+        <Breadcrumbs customCrumbs={[{ label: "Marketplace", path: "/" }, { label: `${car.make} ${car.model}` }]} />
 
         {/* TOP VEHICLE HEADER & GALLERY */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -375,6 +400,45 @@ const VehicleDetails = () => {
             </div>
           </div>
         </div>
+
+        {/* SIMILAR VEHICLES RECOMMENDATIONS */}
+        {similarCars.length > 0 && (
+          <div className="pt-8 border-t border-slate-800 space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-cyan-accent">Curated Recommendations</span>
+                <h3 className="text-xl font-bold text-white">Similar Vehicles You Might Like</h3>
+              </div>
+              <Link to="/" className="text-xs font-semibold text-slate-400 hover:text-cyan-accent transition-colors">
+                View All Marketplace
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {similarCars.map((simCar) => (
+                <div key={simCar._id} className="glass-panel p-4 rounded-3xl border border-slate-800 space-y-3 hover:border-cyan-accent/50 transition-all group">
+                  <div className="relative h-44 rounded-2xl overflow-hidden">
+                    <img src={simCar.images?.[0] || ""} alt="car" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold bg-obsidian-950/80 text-cyan-accent border border-cyan-accent/30">
+                      ${simCar.price?.toLocaleString()}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold uppercase text-cyan-accent">{simCar.make}</span>
+                    <h4 className="text-base font-bold text-white">{simCar.model} ({simCar.year})</h4>
+                    <p className="text-xs text-slate-400 mt-0.5">{simCar.specs?.engine || simCar.fuelType}</p>
+                  </div>
+                  <Link
+                    to={`/cars/${simCar._id}`}
+                    className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-200 font-semibold text-xs rounded-xl border border-slate-800 flex items-center justify-center gap-1.5 transition-colors"
+                  >
+                    View Vehicle
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       {/* LIGHTBOX MODAL */}

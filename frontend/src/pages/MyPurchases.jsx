@@ -6,6 +6,8 @@ import { ShoppingBag, ChevronRight, Clock, MapPin, Truck, CheckCircle2, AlertCir
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
+import Breadcrumbs from "../components/Breadcrumbs";
+
 const API_BASE_URL = "http://localhost:5000/api";
 
 const MyPurchases = () => {
@@ -54,7 +56,8 @@ const MyPurchases = () => {
       <Toaster position="top-right" toastOptions={{ style: { background: "#0F172A", color: "#F8FAFC", border: "1px solid rgba(0,240,255,0.3)" } }} />
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-1 w-full space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+        <Breadcrumbs customCrumbs={[{ label: "My Purchases" }]} />
         <div className="flex items-center justify-between border-b border-slate-800 pb-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-cyan-accent">Customer Dashboard</span>

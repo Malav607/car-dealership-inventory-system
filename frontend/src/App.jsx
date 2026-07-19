@@ -10,6 +10,7 @@ import MyPurchases from "./pages/MyPurchases";
 import OrderDetails from "./pages/OrderDetails";
 import AdminDashboard from "./pages/AdminDashboard";
 import Contact from "./pages/Contact";
+import OrderSuccess from "./pages/OrderSuccess";
 
 function App() {
   return (
@@ -45,6 +46,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrderDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-success/:orderId"
+            element={
+              <ProtectedRoute>
+                <OrderSuccess />
               </ProtectedRoute>
             }
           />
